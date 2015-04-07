@@ -1,0 +1,5 @@
+.env
+*.p12
+*.pem
+node_modules
+lib
