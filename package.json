@@ -4,9 +4,7 @@
   "description": "Google Analytics widgets for Mozaïk dashboard",
   "main": "./components.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start-demo": "npm run build && node demo/server.js",
-    "build-demo": "browserify -r c3 -r bluebird -r request -r moment -r lodash > demo/lib.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": {
     "name": "SC5",
