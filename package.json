@@ -4,6 +4,7 @@
   "description": "Google Analytics widgets for Mozaïk dashboard",
   "main": "./components.js",
   "scripts": {
+    "prepublish": "gulp lib",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": {
