@@ -5,8 +5,7 @@ var classSet = require('react-classset');
 var c3 = require('c3');
 var _ = require('lodash');
 var moment = require('moment');
-var ApiConsumerMixin = require('mozaik/browser').Mixin.ApiConsumer;
-
+var ApiConsumerMixin = require('mozaik/browser').default.Mixin.ApiConsumer;
 
 class TimeseriesChart {
 

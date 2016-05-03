@@ -3,7 +3,7 @@ var fs = require('fs');
 var request = require('superagent');
 var config  = require('./config');
 var Promise = require('bluebird');
-var Analyzer = require('./lib/analyzer');
+var Analyzer = require('./analyzer');
 require('superagent-bluebird-promise');
 
 /**
