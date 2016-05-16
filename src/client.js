@@ -3,7 +3,7 @@ var fs = require('fs');
 var request = require('superagent');
 var config  = require('./config');
 var Promise = require('bluebird');
-var Analyzer = require('./lib/analyzer');
+var Analyzer = require('./analyzer');
 require('superagent-bluebird-promise');
 
 /**
@@ -44,6 +44,7 @@ var client = function (mozaik) {
       console.log('Requesting analyzer top pages:', params);
       return analyzer.getTopPages({
         id: params.id,
+        dimensions: params.dimensions,
         startDate: params.startDate,
         endDate: params.endDate
       });
