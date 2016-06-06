@@ -176,6 +176,7 @@ Show list of pages, in order of most visits within given time range.
 key           | required | description
 --------------|----------|---------------
 `id`          | yes      | *Id of the analytics data to show. See setup steps or analytics view for more info. Example: `1231234321`*
+`dimensions`  | no       | *The dimensions and metrics explorer lists and describes all the dimensions and metrics available through the Core Reporting API. Use this reference [API](https://developers.google.com/analytics/devguides/reporting/core/dimsmets) : Example: `ga:pageTitle`*
 `startDate`   | no       | *Starting date info used in Analytics. Example/default: '30daysAgo'*
 `endDate`     | no       | *End date info used in Analytics. Example/default: 'yesterday'*
 `title`       | no       | *Textual title to show. Example: 'My website'.*

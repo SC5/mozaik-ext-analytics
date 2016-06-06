@@ -1,6 +1,6 @@
 {
   "name": "mozaik-ext-analytics",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Google Analytics widgets for Mozaïk dashboard",
   "main": "./components.js",
   "scripts": {
