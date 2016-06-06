@@ -41,20 +41,20 @@ Analyzer.prototype.request = function(params, parseFunc, apiFunc) {
   apiFunc = apiFunc || analytics.data.ga.get;
 
   return self.authorize()
-  .then(function(auth) {
-    return new Promise(function(resolve, reject) {
-      params.auth = auth.client;
-      apiFunc(params, function(err, body) {
-        if (err) {
-          return reject(err);
-        }
-        if (parseFunc) {
-          return resolve(parseFunc(body));
-        }
-        return resolve(body);
+    .then(function(auth) {
+      return new Promise(function(resolve, reject) {
+        params.auth = auth.client;
+        apiFunc(params, function(err, body) {
+          if (err) {
+            return reject(err);
+          }
+          if (parseFunc) {
+            return resolve(parseFunc(body));
+          }
+          return resolve(body);
+        });
       });
     });
-  });
 };
 
 
@@ -120,7 +120,7 @@ Analyzer.prototype.getTopPages = function(opts) {
   opts = opts || {};
   var self = this;
   var params = {
-    'dimensions': 'ga:pagePath',
+    'dimensions': opts.dimensions || 'ga:pagePath',
     'ids': self.prefixId(opts.id),
     'start-date': opts.startDate || '30daysAgo',
     'end-date': opts.endDate || 'yesterday',
