@@ -44,6 +44,7 @@ var client = function (mozaik) {
       console.log('Requesting analyzer top pages:', params);
       return analyzer.getTopPages({
         id: params.id,
+        dimensions: params.dimensions,
         startDate: params.startDate,
         endDate: params.endDate
       });

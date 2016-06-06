@@ -30,6 +30,7 @@ var TopPages = React.createClass({
       id: id,
       params: {
         id: this.props.id,
+        dimensions: this.props.dimensions,
         startDate: this.props.startDate,
         endDate: this.props.endDate
       }
