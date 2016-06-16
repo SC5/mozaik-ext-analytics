@@ -1,11 +1,13 @@
-var format = require('string-format');
-var React = require('react');
-var Reflux = require('reflux');
-var classSet = require('react-classset');
-var c3 = require('c3');
-var _ = require('lodash');
-var moment = require('moment');
-var ApiConsumerMixin = require('mozaik/browser').default.Mixin.ApiConsumer;
+import format from 'string-format';
+import React from 'react';
+import Reflux from 'reflux';
+import reactMixin from 'react-mixin';
+import { ListenerMixin } from 'reflux';
+import classSet from 'react-classset';
+import c3 from 'c3';
+import _ from 'lodash';
+import moment from 'moment';
+import Mozaik from 'mozaik/browser';
 
 class TimeseriesChart {
 
@@ -27,7 +29,7 @@ class TimeseriesChart {
         x: {
           type: 'timeseries',
           tick: {
-            format: function(x) {
+            format: (x) => {
               return moment(x).format('ddd D');
             },
             count: opts.tickCount
@@ -55,7 +57,7 @@ class TimeseriesChart {
       return;
     }
 
-    _.each(entries, function(entry) {
+    entries.forEach((entry) => {
       //
       var entryObj = _.zipObject(['date', 'views', 'sessions'], entry);
       var date = moment(entryObj.date.value, 'YYYYMMDD');
@@ -124,7 +126,7 @@ var PageViews = React.createClass({
   },
 
   getApiRequest() {
-    var id = format('analytics.pageViews.{}', this.props.id);
+    var id = `analytics.pageViews.${this.props.id}`;
 
     return {
       id: id,
@@ -177,4 +179,7 @@ var PageViews = React.createClass({
   }
 });
 
-module.exports = PageViews;
+reactMixin(PageView.prototype, ListenerMixin);
+reactMixin(PageView.prototype, Mozaik.Mixin.ApiConsumer);
+
+export default PageViews;

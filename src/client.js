@@ -1,21 +1,20 @@
-var path = require('path');
-var fs = require('fs');
-var request = require('superagent');
-var config  = require('./config');
-var Promise = require('bluebird');
-var Analyzer = require('./analyzer');
-require('superagent-bluebird-promise');
+import path from 'path';
+import fs from 'fs';
+import config  from './config';
+import Promise from 'bluebird';
+import Analyzer from './analyzer';
+import request from 'superagent-bluebird-promise';
 
 /**
  * @param {Mozaik} mozaik
  */
-var client = function (mozaik) {
+const client = (mozaik) => {
   mozaik.loadApiConfig(config);
 
-  var keyPath = path.normalize(config.get('analytics.googleServiceKeypath'));
+  let keyPath = path.normalize(config.get('analytics.googleServiceKeypath'));
 
   // Seems absolute/relative?
-  if (keyPath.substr(0, 1) !== '/') {
+  if (!keyPath.match('^\/')) {
     keyPath = path.join(process.cwd(), keyPath);
   }
 
@@ -24,13 +23,13 @@ var client = function (mozaik) {
     return {};
   }
 
-  var analyzer = new Analyzer({
+  const analyzer = new Analyzer({
     serviceEmail: config.get('analytics.googleServiceEmail'),
     serviceKey: fs.readFileSync(keyPath).toString()
   });
 
   return {
-    pageViews: function(params) {
+    pageViews: (params) => {
       mozaik.logger.log('------------------pageviews----');
       console.log('Requesting analyzer statistics:', params);
       return analyzer.getPageViews({
@@ -40,7 +39,7 @@ var client = function (mozaik) {
       });
     },
 
-    topPages: function(params) {
+    topPages: (params) => {
       console.log('Requesting analyzer top pages:', params);
       return analyzer.getTopPages({
         id: params.id,
@@ -51,4 +50,4 @@ var client = function (mozaik) {
   }
 }
 
-module.exports = client;
+export default client;

@@ -5,7 +5,7 @@
   "main": "./components.js",
   "scripts": {
     "prepublish": "gulp lib",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "ava"
   },
   "author": {
     "name": "SC5",
@@ -41,6 +41,7 @@
     "validator": "^3.30.0"
   },
   "devDependencies": {
+    "ava": "^0.15.2",
     "babel-eslint": "6.0.2",
     "babel-register": "6.7.2",
     "del": "^1.1.1",
@@ -51,6 +52,7 @@
     "gulp-regex-replace": "^0.2.3",
     "gulp-rename": "^1.2.0",
     "gulp-strip-debug": "^1.0.2",
+    "jsdom": "^9.2.1",
     "mozaik": "^1.4.4",
     "optimist": "^0.6.1",
     "react": "^0.13.3",
@@ -59,5 +61,17 @@
   "peerDependencies": {
     "mozaik": ">=1.4.2",
     "react": "^0.13.3"
+  },
+  "ava": {
+    "files": [
+      "tests/*.test.js"
+    ],
+    "tap": false,
+    "failFast": true,
+    "require": [
+      "babel-register",
+      "./tests/setup.js"
+    ],
+    "babel": "inherit"
   }
 }

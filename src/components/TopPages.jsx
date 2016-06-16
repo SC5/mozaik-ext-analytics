@@ -1,10 +1,12 @@
-var React = require('react');
-var Reflux = require('reflux');
-var classSet = require('react-classset');
-var c3 = require('c3');
-var _ = require('lodash');
-var moment = require('moment');
-var ApiConsumerMixin = require('mozaik/browser').Mixin.ApiConsumer;
+import React from 'react';
+import Reflux from 'reflux';
+import reactMixin from 'react-mixin';
+import { ListenerMixin } from 'reflux';
+import classSet from 'react-classset';
+import c3 from 'c3';
+import _ from 'lodash';
+import moment from 'moment';
+import Mozaik from 'mozaik/browser';
 
 
 var TopPages = React.createClass({
@@ -71,5 +73,8 @@ var TopPages = React.createClass({
     return widget;
   }
 });
+
+reactMixin(PageView.prototype, ListenerMixin);
+reactMixin(PageView.prototype, Mozaik.Mixin.ApiConsumer);
 
 module.exports = TopPages;
