@@ -1,3 +1,4 @@
+import proxyquire from 'proxyquire';
 import test from 'ava';
 
 const mozaikMock = {
@@ -12,7 +13,13 @@ const mozaikMock = {
 test('client', t => {
   process.env['GOOGLE_SERVICE_EMAIL'] = 'foo@gmail.com';
   process.env['GOOGLE_SERVICE_KEYPATH'] = './test.pem';
-  const client = require('../src/client').default;
+  // Mock the fs checks
+  const client = proxyquire('../src/client', {
+    fs: {
+      existsSync: () => true,
+      readFileSync: () => 'foo'
+    }
+  }).default;
 
-  client(mozaikMock)
+  t.truthy(client(mozaikMock).pageViews);
 });
