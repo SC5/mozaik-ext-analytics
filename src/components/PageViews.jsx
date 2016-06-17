@@ -88,18 +88,12 @@ class TimeseriesChart {
 };
 
 
-var PageViews = React.createClass({
-  chartClassName: 'chart',
-  chart: null,
+class PageViews {
 
-  mixins: [
-    Reflux.ListenerMixin,
-    ApiConsumerMixin
-  ],
-
-  propTypes: {
-    id: React.PropTypes.string.isRequired
-  },
+  constructor() {
+    this.chartClassName = 'chart';
+    this.chart = null;
+  }
 
   getInitialState() {
     return {
@@ -107,7 +101,7 @@ var PageViews = React.createClass({
       avg: null,
       entries: []
     }
-  },
+  }
 
   componentDidMount() {
     var chartElement = this.getDOMNode().getElementsByClassName(this.chartClassName)[0];
@@ -117,13 +111,13 @@ var PageViews = React.createClass({
       tickCount: this.props.tickCount,
       dateFormat: this.props.dateFormat
     });
-  },
+  }
 
   componentWillUnmount() {
     if (this.chart) {
       this.chart.destroy();
     }
-  },
+  }
 
   getApiRequest() {
     var id = `analytics.pageViews.${this.props.id}`;
@@ -136,7 +130,7 @@ var PageViews = React.createClass({
         endDate: this.props.endDate
       }
     };
-  },
+  }
 
   onApiData(data) {
     var total = data.totalsForAllResults['ga:pageviews'] || null;
@@ -149,7 +143,7 @@ var PageViews = React.createClass({
     });
 
     this.chart.loadEntries(this.state.entries);
-  },
+  }
 
   render() {
     var title = this.props.title || 'Analytics';
@@ -177,9 +171,16 @@ var PageViews = React.createClass({
 
     return widget;
   }
-});
 
-reactMixin(PageView.prototype, ListenerMixin);
-reactMixin(PageView.prototype, Mozaik.Mixin.ApiConsumer);
+}
+
+PageViews.displayName = 'PageViews';
+
+PageViews.propTypes = {
+  id: React.PropTypes.string.isRequired
+};
+
+reactMixin(PageViews.prototype, ListenerMixin);
+reactMixin(PageViews.prototype, Mozaik.Mixin.ApiConsumer);
 
 export default PageViews;

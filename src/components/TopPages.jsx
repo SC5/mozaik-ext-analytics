@@ -1,5 +1,4 @@
-import React from 'react';
-import Reflux from 'reflux';
+import React, { Component, PropTypes } from 'react';
 import reactMixin from 'react-mixin';
 import { ListenerMixin } from 'reflux';
 import classSet from 'react-classset';
@@ -9,21 +8,14 @@ import moment from 'moment';
 import Mozaik from 'mozaik/browser';
 
 
-var TopPages = React.createClass({
-  mixins: [
-    Reflux.ListenerMixin,
-    ApiConsumerMixin
-  ],
+class TopPages extends Component {
 
-  propTypes: {
-    id: React.PropTypes.string.isRequired
-  },
-
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+    this.state = {
       entries: []
-    }
-  },
+    };
+  }
 
   getApiRequest() {
     var id = 'analytics.topPages';
@@ -36,13 +28,13 @@ var TopPages = React.createClass({
         endDate: this.props.endDate
       }
     };
-  },
+  }
 
   onApiData(data) {
     this.setState({
       entries: data.results
     });
-  },
+  }
 
   render() {
     var title = this.props.title || 'Analytics';
@@ -72,9 +64,15 @@ var TopPages = React.createClass({
 
     return widget;
   }
-});
+}
 
-reactMixin(PageView.prototype, ListenerMixin);
-reactMixin(PageView.prototype, Mozaik.Mixin.ApiConsumer);
+TopPages.displayName = 'TopPages';
 
-module.exports = TopPages;
+TopPages.propTypes = {
+  id: React.PropTypes.string.isRequired
+};
+
+reactMixin(TopPages.prototype, ListenerMixin);
+reactMixin(TopPages.prototype, Mozaik.Mixin.ApiConsumer);
+
+export default TopPages;
