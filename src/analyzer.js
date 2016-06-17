@@ -25,7 +25,7 @@ class Analyzer {
           console.log(err);
           return reject(err);
         }
-        return resolve({ client: self.jwtClient, tokens: tokens });
+        return resolve({ client: this.jwtClient, tokens: tokens });
       });
     });
   }

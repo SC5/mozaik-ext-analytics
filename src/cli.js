@@ -1,18 +1,17 @@
-var fs = require('fs');
-var path = require('path');
-var dotenv = require('dotenv');
-var _ = require('lodash');
-var pprint = require('pretty-print');
-var Analyzer = require('./lib/lib/analyzer');
-var argv = require('optimist')
-  .usage('Usage: $0 --id [profile-id] / --account')
-  .argv;
+import fs from 'fs';
+import path from 'path';
+import dotenv from 'dotenv';
+import _ from 'lodash';
+import pprint from 'pretty-print';
+import Analyzer from './analyzer';
+import * as optimist from 'optimist'
 
+const argv = optimist.usage('Usage: $0 --id [profile-id] / --account').argv;
 dotenv.load();
 
-var analyzer = new Analyzer({
+const analyzer = new Analyzer({
   serviceEmail: process.env.GOOGLE_SERVICE_EMAIL,
-  serviceKey: fs.readFileSync(path.join(__dirname, process.env.GOOGLE_SERVICE_KEYPATH)).toString()
+  serviceKey: fs.readFileSync(path.join(process.cwd(), process.env.GOOGLE_SERVICE_KEYPATH)).toString()
 });
 
 if (process.env.GOOGLE_ANALYTICS_PROFILE_ID) {
@@ -23,34 +22,33 @@ if (process.env.GOOGLE_ANALYTICS_PROFILE_ID) {
 if (argv.id && !argv.account) {
   analyzer.getTopPages({ id: argv.id })
   //analyzer.getPageViews({ ids: argv.id })
-  .then(function(data) {
-    _.each(data.results, function(entry) {
+  .then((data) => {
+    _.each(data.results, (entry) => {
       // Map entries
       entryObj = _.zipObject(['path', 'views', 'avgTime'], entry);
       console.log('%s: %s', entryObj.path.value, entryObj.views.value);
     });
   })
-  .catch(function(err) {
+  .catch((err) => {
     console.warn(err);
   });
 }
 else {
   // List profile ids
   analyzer.getAccountProfiles()
-  .then(function(profiles) {
+  .then((profiles) => {
     console.log('Available profiles:\n');
-    _.each(profiles, function(profile, key) {
+    _.each(profiles, (profile, key) => {
       console.log(profile.name);
-      _.each(profile.properties, function(prop) {
+      _.each(profile.properties, (prop) => {
         console.log('  ', prop.name);
-        _.each(prop.profiles, function(profile) {
+        _.each(prop.profiles, (profile) => {
           pprint(profile, { leftPadding: 4 });
         });
       });
     });
   })
-  .catch(function(err) {
+  .catch((err) => {
     console.error(err);
   });
 }
-
