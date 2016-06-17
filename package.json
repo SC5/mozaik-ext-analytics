@@ -12,6 +12,9 @@
     "name": "SC5",
     "url": "http://sc5.io/"
   },
+  "contributors": [
+    { "name" : "Juha Mustonen", "email" : "juha.p.mustonen@gmail.com" }
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/SC5/mozaik-ext-analytics.git"
