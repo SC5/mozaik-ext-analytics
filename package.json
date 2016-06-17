@@ -4,6 +4,7 @@
   "description": "Google Analytics widgets for Mozaïk dashboard",
   "main": "./components.js",
   "scripts": {
+    "cli": "node cli.js",
     "prepublish": "gulp lib",
     "test": "ava"
   },
