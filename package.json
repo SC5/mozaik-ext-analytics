@@ -13,7 +13,10 @@
     "url": "http://sc5.io/"
   },
   "contributors": [
-    { "name" : "Juha Mustonen", "email" : "juha.p.mustonen@gmail.com" }
+    {
+      "name": "Juha Mustonen",
+      "email": "juha.p.mustonen@gmail.com"
+    }
   ],
   "repository": {
     "type": "git",
@@ -49,6 +52,8 @@
     "babel-eslint": "6.0.2",
     "babel-register": "6.7.2",
     "del": "^1.1.1",
+    "eslint": "^2.13.0",
+    "eslint-plugin-react": "^5.2.2",
     "gulp": "^3.8.11",
     "gulp-6to5": "^3.0.0",
     "gulp-if": "^1.2.5",

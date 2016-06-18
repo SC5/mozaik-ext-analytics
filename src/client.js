@@ -40,6 +40,7 @@ const client = (mozaik) => {
     },
 
     topPages: (params) => {
+      mozaik.logger.log('------------------toppages----');
       console.log('Requesting analyzer top pages:', params);
       return analyzer.getTopPages({
         id: params.id,
@@ -47,7 +48,7 @@ const client = (mozaik) => {
         endDate: params.endDate
       });
     }
-  }
-}
+  };
+};
 
 export default client;

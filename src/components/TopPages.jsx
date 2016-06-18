@@ -41,7 +41,7 @@ class TopPages extends Component {
     var avg = this.state.avg || '-';
     var total = this.state.total || '-';
 
-    var entries = _.map(this.state.entries, function(entry) {
+    var entries = _.map(this.state.entries, (entry) => {
       var entryObj = _.zipObject(['pagePath', 'pageViews', 'avgTimeOnPage'], entry);
       return <li>
         <span className="path">{entryObj.pagePath.value}</span>

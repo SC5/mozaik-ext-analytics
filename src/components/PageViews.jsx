@@ -1,5 +1,4 @@
-import format from 'string-format';
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import Reflux from 'reflux';
 import reactMixin from 'react-mixin';
 import { ListenerMixin } from 'reflux';
@@ -69,7 +68,7 @@ class TimeseriesChart {
           end: date.format('YYYY-MM-DD')
         };
         weekDayRegions.push(weekDayRegion);
-      };
+      }
 
       xData.push(date.format('YYYY-MM-DD'));
       visitsData.push(parseInt(entryObj.views.value, 10));
@@ -85,26 +84,28 @@ class TimeseriesChart {
       regions: weekDayRegions
     });
   }
-};
+}
 
 
-class PageViews {
+class PageViews extends Component {
 
-  constructor() {
+  constructor(props) {
+    super(props);
+
     this.chartClassName = 'chart';
     this.chart = null;
-  }
-
-  getInitialState() {
-    return {
+    this.state = {
       total: null,
       avg: null,
       entries: []
-    }
+    };
   }
 
   componentDidMount() {
-    var chartElement = this.getDOMNode().getElementsByClassName(this.chartClassName)[0];
+    //var chartElement = this.getDOMNode().getElementsByClassName(this.chartClassName)[0];
+    //console.log('CHART', this._chart);
+    const chartElement = this._chart.getDOMNode();
+
     this.chart = new TimeseriesChart(chartElement, {
       min: this.props.min,
       max: this.props.max,
@@ -120,7 +121,7 @@ class PageViews {
   }
 
   getApiRequest() {
-    var id = `analytics.pageViews.${this.props.id}`;
+    const id = `analytics.pageViews.${this.props.id}`;
 
     return {
       id: id,
@@ -133,8 +134,8 @@ class PageViews {
   }
 
   onApiData(data) {
-    var total = data.totalsForAllResults['ga:pageviews'] || null;
-    var avg = Math.floor(total / data.totalResults, -1);
+    const total = data.totalsForAllResults['ga:pageviews'] || null;
+    const avg = Math.floor(total / data.totalResults, -1);
 
     this.setState({
       total: total,
@@ -164,7 +165,7 @@ class PageViews {
           <i className="fa fa-line-chart" />
         </div>
         <div className="widget__body">
-          <div className={this.chartClassName}></div>
+          <div className={this.chartClassName} ref={(c) => this._chart = c}></div>
         </div>
       </div>
     );
