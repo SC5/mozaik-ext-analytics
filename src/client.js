@@ -28,8 +28,8 @@ const client = (mozaik) => {
     serviceKey: fs.readFileSync(keyPath).toString()
   });
 
-  return {
-    pageViews: (params) => {
+  const apiCalls = {
+    pageViews(params) {
       mozaik.logger.log('------------------pageviews----');
       console.log('Requesting analyzer statistics:', params);
       return analyzer.getPageViews({
@@ -39,7 +39,7 @@ const client = (mozaik) => {
       });
     },
 
-    topPages: (params) => {
+    topPages(params) {
       mozaik.logger.log('------------------toppages----');
       console.log('Requesting analyzer top pages:', params);
       return analyzer.getTopPages({
@@ -49,6 +49,8 @@ const client = (mozaik) => {
       });
     }
   };
+
+  return apiCalls;
 };
 
 export default client;

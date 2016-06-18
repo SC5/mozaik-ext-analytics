@@ -19,6 +19,7 @@ class TopPages extends Component {
 
   getApiRequest() {
     var id = 'analytics.topPages';
+    console.log('Requesting API data for:', id);
 
     return {
       id: id,
@@ -31,6 +32,7 @@ class TopPages extends Component {
   }
 
   onApiData(data) {
+    console.log('Received API data for topPages:', data);
     this.setState({
       entries: data.results
     });

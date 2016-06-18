@@ -102,8 +102,6 @@ class PageViews extends Component {
   }
 
   componentDidMount() {
-    //var chartElement = this.getDOMNode().getElementsByClassName(this.chartClassName)[0];
-    //console.log('CHART', this._chart);
     const chartElement = this._chart.getDOMNode();
 
     this.chart = new TimeseriesChart(chartElement, {
@@ -122,6 +120,7 @@ class PageViews extends Component {
 
   getApiRequest() {
     const id = `analytics.pageViews.${this.props.id}`;
+    console.log('Requesting API data for:', id);
 
     return {
       id: id,
@@ -134,6 +133,7 @@ class PageViews extends Component {
   }
 
   onApiData(data) {
+    console.log('Received API data for pageViews:', data);
     const total = data.totalsForAllResults['ga:pageviews'] || null;
     const avg = Math.floor(total / data.totalResults, -1);
 
