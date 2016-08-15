@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import Reflux from 'reflux';
 import reactMixin from 'react-mixin';
 import { ListenerMixin } from 'reflux';
 import classSet from 'react-classset';
@@ -119,6 +118,13 @@ class PageViews extends Component {
   }
 
   getApiRequest() {
+    console.log('PAGEVIEW analytics.test');
+    return {
+      id: '__analytics.test',
+      params: {}
+    };
+
+
     const id = `analytics.pageViews.${this.props.id}`;
     console.log('Requesting API data for:', id);
 
@@ -150,6 +156,7 @@ class PageViews extends Component {
     var title = this.props.title || 'Analytics';
     var avg = this.state.avg || '-';
     var total = this.state.total || '-';
+    var setChartRef = (c) => this._chart = c;
 
     var widget = (
       <div>
@@ -165,7 +172,7 @@ class PageViews extends Component {
           <i className="fa fa-line-chart" />
         </div>
         <div className="widget__body">
-          <div className={this.chartClassName} ref={(c) => this._chart = c}></div>
+          <div className={this.chartClassName} ref={setChartRef}></div>
         </div>
       </div>
     );
@@ -178,6 +185,13 @@ class PageViews extends Component {
 PageViews.displayName = 'PageViews';
 
 PageViews.propTypes = {
+  title: React.PropTypes.string,
+  dateFormat: React.PropTypes.string,
+  startDate: React.PropTypes.string,
+  endDate: React.PropTypes.string,
+  min: React.PropTypes.integer,
+  max: React.PropTypes.integer,
+  tickCount: React.PropTypes.integer,
   id: React.PropTypes.string.isRequired
 };
 

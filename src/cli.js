@@ -4,18 +4,43 @@ import dotenv from 'dotenv';
 import _ from 'lodash';
 import pprint from 'pretty-print';
 import Analyzer from './analyzer';
-import * as optimist from 'optimist'
+import * as yargs from 'yargs';
 
-const argv = optimist.usage('Usage: $0 --id [profile-id] / --account').argv;
 dotenv.load();
+let env = {
+  keyPath: process.env.GOOGLE_SERVICE_KEYPATH,
+  profileId: process.env.GOOGLE_ANALYTICS_PROFILE_ID,
+  serviceEmail: process.env.GOOGLE_SERVICE_EMAIL
+};
 
+let bargs = yargs
+  .env('MOZAIK_EXT_ANALYTICS')
+  .option('key', {
+    alias: 'google-service-keypath'
+  })
+  .option('email', {
+    alias: 'google-service-email',
+  })
+  .option('id', {
+    alias: 'profile-id'
+  })
+  .usage('Usage: $0 --id [profile-id] --key / --account');
+
+env.keyPath = env.keyPath || bargs.argv.key;
+
+if (!env.keyPath) {
+  bargs = bargs.demand(['key']);
+}
+const argv = bargs.argv;
+
+const serviceKeyPath = path.isAbsolute(env.keyPath) ? env.keyPath : path.join(process.cwd(), env.keyPath);
 const analyzer = new Analyzer({
-  serviceEmail: process.env.GOOGLE_SERVICE_EMAIL,
-  serviceKey: fs.readFileSync(path.join(process.cwd(), process.env.GOOGLE_SERVICE_KEYPATH)).toString()
+  serviceEmail: env.serviceEmail,
+  serviceKey: fs.readFileSync(serviceKeyPath).toString()
 });
 
 if (process.env.GOOGLE_ANALYTICS_PROFILE_ID) {
-  console.info('Using profile id from environment variables:', process.env.GOOGLE_ANALYTICS_PROFILE_ID);
+  console.info('Using profile id from environment variables:', env.profileId);
   argv.id = process.env.GOOGLE_ANALYTICS_PROFILE_ID;
 }
 

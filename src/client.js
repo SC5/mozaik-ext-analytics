@@ -29,11 +29,15 @@ const client = (mozaik) => {
   });
 
   const apiCalls = {
+    test() {
+      return Promise.resolve('FROM TEST');
+    },
+
     pageViews(params) {
       mozaik.logger.log('------------------pageviews----');
       console.log('Requesting analyzer statistics:', params);
       return analyzer.getPageViews({
-        id: params.id,
+        id: ddparams.id,
         startDate: params.startDate,
         endDate: params.endDate
       });
