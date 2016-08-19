@@ -1,12 +1,11 @@
-var format = require('string-format');
-var React = require('react');
-var Reflux = require('reflux');
-var classSet = require('react-classset');
-var c3 = require('c3');
-var _ = require('lodash');
-var moment = require('moment');
-var ApiConsumerMixin = require('mozaik/browser').Mixin.ApiConsumer;
-
+import React, { Component, PropTypes } from 'react';
+import reactMixin from 'react-mixin';
+import { ListenerMixin } from 'reflux';
+import classSet from 'react-classset';
+import c3 from 'c3';
+import _ from 'lodash';
+import moment from 'moment';
+import Mozaik from 'mozaik/browser';
 
 class TimeseriesChart {
 
@@ -28,7 +27,7 @@ class TimeseriesChart {
         x: {
           type: 'timeseries',
           tick: {
-            format: function(x) {
+            format: (x) => {
               return moment(x).format('ddd D');
             },
             count: opts.tickCount
@@ -56,7 +55,7 @@ class TimeseriesChart {
       return;
     }
 
-    _.each(entries, function(entry) {
+    entries.forEach((entry) => {
       //
       var entryObj = _.zipObject(['date', 'views', 'sessions'], entry);
       var date = moment(entryObj.date.value, 'YYYYMMDD');
@@ -68,7 +67,7 @@ class TimeseriesChart {
           end: date.format('YYYY-MM-DD')
         };
         weekDayRegions.push(weekDayRegion);
-      };
+      }
 
       xData.push(date.format('YYYY-MM-DD'));
       visitsData.push(parseInt(entryObj.views.value, 10));
@@ -84,48 +83,43 @@ class TimeseriesChart {
       regions: weekDayRegions
     });
   }
-};
+}
 
 
-var PageViews = React.createClass({
-  chartClassName: 'chart',
-  chart: null,
+class PageViews extends Component {
 
-  mixins: [
-    Reflux.ListenerMixin,
-    ApiConsumerMixin
-  ],
+  constructor(props) {
+    super(props);
 
-  propTypes: {
-    id: React.PropTypes.string.isRequired
-  },
-
-  getInitialState() {
-    return {
+    this.chartClassName = 'chart';
+    this.chart = null;
+    this.state = {
       total: null,
       avg: null,
       entries: []
-    }
-  },
+    };
+  }
 
   componentDidMount() {
-    var chartElement = this.getDOMNode().getElementsByClassName(this.chartClassName)[0];
+    const chartElement = this._chart.getDOMNode();
+
     this.chart = new TimeseriesChart(chartElement, {
       min: this.props.min,
       max: this.props.max,
       tickCount: this.props.tickCount,
       dateFormat: this.props.dateFormat
     });
-  },
+  }
 
   componentWillUnmount() {
     if (this.chart) {
       this.chart.destroy();
     }
-  },
+  }
 
   getApiRequest() {
-    var id = format('analytics.pageViews.{}', this.props.id);
+    const id = `analytics.pageViews.${this.props.id}`;
+    console.log('Requesting API data for:', id);
 
     return {
       id: id,
@@ -135,11 +129,12 @@ var PageViews = React.createClass({
         endDate: this.props.endDate
       }
     };
-  },
+  }
 
   onApiData(data) {
-    var total = data.totalsForAllResults['ga:pageviews'] || null;
-    var avg = Math.floor(total / data.totalResults, -1);
+    console.log('Received API data for pageViews:', data);
+    const total = data.totalsForAllResults['ga:pageviews'] || null;
+    const avg = Math.floor(total / data.totalResults, -1);
 
     this.setState({
       total: total,
@@ -148,12 +143,13 @@ var PageViews = React.createClass({
     });
 
     this.chart.loadEntries(this.state.entries);
-  },
+  }
 
   render() {
-    var title = this.props.title || 'Analytics';
+    var title = this.props.title;
     var avg = this.state.avg || '-';
     var total = this.state.total || '-';
+    var setChartRef = (c) => this._chart = c;
 
     var widget = (
       <div>
@@ -169,13 +165,40 @@ var PageViews = React.createClass({
           <i className="fa fa-line-chart" />
         </div>
         <div className="widget__body">
-          <div className={this.chartClassName}></div>
+          <div className={this.chartClassName} ref={setChartRef}></div>
         </div>
       </div>
     );
 
     return widget;
   }
-});
 
-module.exports = PageViews;
+}
+
+PageViews.displayName = 'PageViews';
+
+PageViews.propTypes = {
+  title: React.PropTypes.string,
+  dateFormat: React.PropTypes.string,
+  startDate: React.PropTypes.string,
+  endDate: React.PropTypes.string,
+  min: React.PropTypes.integer,
+  max: React.PropTypes.integer,
+  tickCount: React.PropTypes.integer,
+  id: React.PropTypes.string.isRequired
+};
+
+PageViews.defaultProps = {
+  title: 'Analytics',
+  dateFormat: 'YYYY-MM-DD',
+  startDate: '30daysAgo',
+  endDate: null,
+  min: null,
+  max: null,
+  tickCount: null
+};
+
+reactMixin(PageViews.prototype, ListenerMixin);
+reactMixin(PageViews.prototype, Mozaik.Mixin.ApiConsumer);
+
+export default PageViews;

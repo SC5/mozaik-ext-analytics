@@ -1,30 +1,25 @@
-var React = require('react');
-var Reflux = require('reflux');
-var classSet = require('react-classset');
-var c3 = require('c3');
-var _ = require('lodash');
-var moment = require('moment');
-var ApiConsumerMixin = require('mozaik/browser').Mixin.ApiConsumer;
+import React, { Component, PropTypes } from 'react';
+import reactMixin from 'react-mixin';
+import { ListenerMixin } from 'reflux';
+import classSet from 'react-classset';
+import c3 from 'c3';
+import _ from 'lodash';
+import moment from 'moment';
+import Mozaik from 'mozaik/browser';
 
 
-var TopPages = React.createClass({
-  mixins: [
-    Reflux.ListenerMixin,
-    ApiConsumerMixin
-  ],
+class TopPages extends Component {
 
-  propTypes: {
-    id: React.PropTypes.string.isRequired
-  },
-
-  getInitialState() {
-    return {
+  constructor(props) {
+    super(props);
+    this.state = {
       entries: []
-    }
-  },
+    };
+  }
 
   getApiRequest() {
     var id = 'analytics.topPages';
+    console.log('Requesting API data for:', id);
 
     return {
       id: id,
@@ -35,20 +30,21 @@ var TopPages = React.createClass({
         endDate: this.props.endDate
       }
     };
-  },
+  }
 
   onApiData(data) {
+    console.log('Received API data for topPages:', data);
     this.setState({
       entries: data.results
     });
-  },
+  }
 
   render() {
     var title = this.props.title || 'Analytics';
     var avg = this.state.avg || '-';
     var total = this.state.total || '-';
 
-    var entries = _.map(this.state.entries, function(entry) {
+    var entries = _.map(this.state.entries, (entry) => {
       var entryObj = _.zipObject(['pagePath', 'pageViews', 'avgTimeOnPage'], entry);
       return <li>
         <span className="path">{entryObj.pagePath.value}</span>
@@ -71,6 +67,15 @@ var TopPages = React.createClass({
 
     return widget;
   }
-});
+}
 
-module.exports = TopPages;
+TopPages.displayName = 'TopPages';
+
+TopPages.propTypes = {
+  id: React.PropTypes.string.isRequired
+};
+
+reactMixin(TopPages.prototype, ListenerMixin);
+reactMixin(TopPages.prototype, Mozaik.Mixin.ApiConsumer);
+
+export default TopPages;

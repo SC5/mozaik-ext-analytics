@@ -1,21 +1,19 @@
-var path = require('path');
-var fs = require('fs');
-var request = require('superagent');
-var config  = require('./config');
-var Promise = require('bluebird');
-var Analyzer = require('./analyzer');
-require('superagent-bluebird-promise');
+import path from 'path';
+import fs from 'fs';
+import config  from './config';
+import Promise from 'bluebird';
+import Analyzer from './analyzer';
 
 /**
  * @param {Mozaik} mozaik
  */
-var client = function (mozaik) {
+const client = (mozaik) => {
   mozaik.loadApiConfig(config);
 
-  var keyPath = path.normalize(config.get('analytics.googleServiceKeypath'));
+  let keyPath = path.normalize(config.get('analytics.googleServiceKeypath'));
 
   // Seems absolute/relative?
-  if (keyPath.substr(0, 1) !== '/') {
+  if (!keyPath.match('^\/')) {
     keyPath = path.join(process.cwd(), keyPath);
   }
 
@@ -24,15 +22,15 @@ var client = function (mozaik) {
     return {};
   }
 
-  var analyzer = new Analyzer({
+  const analyzer = new Analyzer({
     serviceEmail: config.get('analytics.googleServiceEmail'),
     serviceKey: fs.readFileSync(keyPath).toString()
   });
 
-  return {
-    pageViews: function(params) {
-      mozaik.logger.log('------------------pageviews----');
-      console.log('Requesting analyzer statistics:', params);
+  const apiMethods = {
+
+    pageViews(params) {
+      //console.log('Requesting analyzer statistics:', params);
       return analyzer.getPageViews({
         id: params.id,
         startDate: params.startDate,
@@ -40,8 +38,8 @@ var client = function (mozaik) {
       });
     },
 
-    topPages: function(params) {
-      console.log('Requesting analyzer top pages:', params);
+    topPages(params) {
+      //console.log('Requesting analyzer top pages:', params);
       return analyzer.getTopPages({
         id: params.id,
         dimensions: params.dimensions,
@@ -49,7 +47,9 @@ var client = function (mozaik) {
         endDate: params.endDate
       });
     }
-  }
-}
+  };
 
-module.exports = client;
+  return apiMethods;
+};
+
+export default client;

@@ -32,26 +32,31 @@ Follow the steps to install and configure widget into dashboard
 - Install modules from npmjs:
 
   ```shell
-  npm install mozaik-ext-analytics
+  npm install -S mozaik-ext-analytics
   ```
 
 - Register client api by adding to dashboard `app.js`:
 
   ```javascript
-  mozaik.bus.registerApi('analytics', require('mozaik-ext-analytics/client'));
+  import analytics from 'mozaik-ext-analytics/client';
+  mozaik.bus.registerApi('analytics', analytics;
   ```
 
-- Register widgets by adding to dashboard ``src/App.jsx``:
+- Register widgets by adding to dashboard `src/App.jsx`:
 
   ```javascript
-  mozaik.addBatch('analytics', require('mozaik-ext-analytics'));
+  import analytics from 'mozaik-ext-analytics';
+  mozaik.addBatch('analytics', analytics);
   ```
 
-- Build the dashboard:
+- (Re)build the dashboard:
 
   ```shell
-  gulp publish
+  npm run build-assets
   ```
+
+- Configure widgets (see Widgets -section)
+- Start dashboard: `node app.js`
 
 ### Google Analytics
 
