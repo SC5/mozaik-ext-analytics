@@ -1,8 +1,9 @@
 import path from 'path';
 import fs from 'fs';
-import config  from './config';
 import Promise from 'bluebird';
-import Analyzer from './analyzer';
+// Using require for testability/mocking support
+const config = require('./config').default;
+const Analyzer = require('./analyzer').default;
 
 /**
  * @param {Mozaik} mozaik
@@ -11,10 +12,17 @@ const client = (mozaik) => {
   mozaik.loadApiConfig(config);
 
   // Either key or keyPath is required
-  let keyPath = path.normalize(config.get('analytics.googleServiceKeypath'));
   let key = config.get('analytics.googleServiceKey');
 
   if (!key) {
+    let keyPath = config.get('analytics.googleServiceKeypath');
+
+    if (!keyPath) {
+      mozaik.logger.error('No key or key path defined -- ignoring API');
+      return {};
+    }
+
+    keyPath = path.normalize(keyPath);
     // Seems absolute/relative?
     if (!keyPath.match('^\/')) {
       keyPath = path.join(process.cwd(), keyPath);

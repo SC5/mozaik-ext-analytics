@@ -40,14 +40,13 @@ test('client key', t => {
   };
 
   // Mock the config
-  // FIXME: proxyquire is not mocking as expected
-  /*
   const client = proxyquire('../src/client', {
     './config': {
-      get: (name) => { configKeyValues[name]; }
+      default: {
+        get: (name) => { return configKeyValues[name]; }
+      }
     }
   }).default;
 
   t.truthy(client(mozaikMock).pageViews);
-  */
 });
