@@ -85,6 +85,8 @@ Follow the steps to install and configure widget into dashboard
 
   ```shell
   GOOGLE_SERVICE_EMAIL=generated-by-google-console@developer.gserviceaccount.com
+  # one of the following:
+  GOOGLE_SERVICE_KEY=abcdef123456...
   GOOGLE_SERVICE_KEYPATH=mozaik-ext-analytics.pem
   ```
 
@@ -112,7 +114,9 @@ module.exports = {
   // Configure api
   api: {
     analytics: {
+      // NOTE: Either key or key path needs to be provided
       googleServiceEmail: process.env.GOOGLE_SERVICE_EMAIL,
+      googleServiceKey: process.env.GOOGLE_SERVICE_KEY
       googleServiceKeypath: process.env.GOOGLE_SERVICE_KEYPATH
     },
     // Other services ...

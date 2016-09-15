@@ -14,6 +14,12 @@ const config = convict({
       default: null,
       format: String,
       env: 'GOOGLE_SERVICE_KEYPATH'
+    },
+    googleServiceKey: {
+      doc: 'Contents of the .PEM file. Either key or keypath is required',
+      default: null,
+      format: String,
+      env: 'GOOGLE_SERVICE_KEY'
     }
   }
 });

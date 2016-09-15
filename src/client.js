@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
-import config  from './config';
 import Promise from 'bluebird';
+import config from './config';
 import Analyzer from './analyzer';
 
 /**
@@ -10,21 +10,34 @@ import Analyzer from './analyzer';
 const client = (mozaik) => {
   mozaik.loadApiConfig(config);
 
-  let keyPath = path.normalize(config.get('analytics.googleServiceKeypath'));
+  // Either key or keyPath is required
+  let key = config.get('analytics.googleServiceKey');
 
-  // Seems absolute/relative?
-  if (!keyPath.match('^\/')) {
-    keyPath = path.join(process.cwd(), keyPath);
-  }
+  if (!key) {
+    let keyPath = config.get('analytics.googleServiceKeypath');
 
-  if (!fs.existsSync(keyPath)) {
-    mozaik.logger.error('Failed to find analytics .PEM file: %s -- ignoring API', keyPath);
-    return {};
+    if (!keyPath) {
+      mozaik.logger.error('No key or key path defined -- ignoring API');
+      return {};
+    }
+
+    keyPath = path.normalize(keyPath);
+    // Seems absolute/relative?
+    if (!keyPath.match('^\/')) {
+      keyPath = path.join(process.cwd(), keyPath);
+    }
+
+    if (!fs.existsSync(keyPath)) {
+      mozaik.logger.error('Failed to find analytics .PEM file: %s -- ignoring API', keyPath);
+      return {};
+    }
+
+    key = fs.readFileSync(keyPath).toString();
   }
 
   const analyzer = new Analyzer({
     serviceEmail: config.get('analytics.googleServiceEmail'),
-    serviceKey: fs.readFileSync(keyPath).toString()
+    serviceKey: key
   });
 
   const apiMethods = {
