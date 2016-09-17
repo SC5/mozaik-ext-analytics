@@ -71,16 +71,16 @@ class Analyzer {
           })
           .flatten()
           .value();
-       })
+      })
       .value();
     return res;
   }
 
   getAccountProfiles(opts) {
     opts = opts || {};
-    var params = {
+    const params = {
       'fields': 'items(name,webProperties(name,profiles(id,name)))'
-    }
+    };
     const parseFunc = (res) => {
       return _.chain(res.items)
         .map((item) => {
@@ -118,13 +118,13 @@ class Analyzer {
 
   getPageViews(opts = {}) {
     opts = opts || {};
-    var params = {
+    const params = {
       'ids': this.prefixId(opts.id),
       'start-date': opts.startDate || '7daysAgo',
       'end-date': opts.endDate || 'yesterday',
       'metrics': 'ga:pageviews,ga:sessions',
       'dimensions': 'ga:date'
-    }
+    };
 
     return this.request(params, this.mapRequestResponse);
   }

@@ -1,8 +1,9 @@
 import path from 'path';
 import fs from 'fs';
-import Promise from 'bluebird';
 import config from './config';
 import Analyzer from './analyzer';
+import Promise from 'bluebird';
+import request from 'superagent-bluebird-promise';
 
 /**
  * @param {Mozaik} mozaik
@@ -40,10 +41,9 @@ const client = (mozaik) => {
     serviceKey: key
   });
 
-  const apiMethods = {
-
+  const apiCalls = {
     pageViews(params) {
-      //console.log('Requesting analyzer statistics:', params);
+      console.log('Requesting analyzer statistics:', params);
       return analyzer.getPageViews({
         id: params.id,
         startDate: params.startDate,
@@ -52,7 +52,7 @@ const client = (mozaik) => {
     },
 
     topPages(params) {
-      //console.log('Requesting analyzer top pages:', params);
+      console.log('Requesting analyzer top pages:', params);
       return analyzer.getTopPages({
         id: params.id,
         dimensions: params.dimensions,
@@ -62,7 +62,7 @@ const client = (mozaik) => {
     }
   };
 
-  return apiMethods;
+  return apiCalls;
 };
 
 export default client;

@@ -38,7 +38,6 @@ test('client', t => {
   t.truthy(client(mozaikMock).pageViews);
 });
 
-
 test('client key', t => {
   const client = proxyquire('../src/client', {
     './config': configMock
