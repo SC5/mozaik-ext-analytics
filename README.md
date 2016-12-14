@@ -192,14 +192,18 @@ key           | required | description
 
 ### usage
 
-```javascript
-{
-  type: 'analytics.top_pages',
-  id: '123123123',
-  startDate: '30daysAgo',
-  columns: 2, rows: 1,
-  x: 1, y: 0
-}
+``` yaml
+# config.yml
+dashboards:
+- # …
+  widgets:
+  - type:       analytics.top_pages
+    id:         123123123
+    startDate:  30daysAgo
+    columns:    2
+    rows:       1
+    x:          0
+    y:          0
 ```
 
 ## License
