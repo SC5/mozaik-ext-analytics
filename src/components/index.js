@@ -1,7 +1,7 @@
-import PageViews from './PageViews.jsx';
-import TopPages from './TopPages.jsx';
+//import PageViews from './PageViews'
+import TopPages  from './TopPages'
 
 export default {
-  PageViews,
-  TopPages
-};
+//    PageViews,
+    TopPages,
+}

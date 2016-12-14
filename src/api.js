@@ -69,16 +69,17 @@ class API {
 
     mapRequestResponse(res) {
         res.results = _.chain(res.rows)
-            .map((row) => {
-        return _.chain(row)
-          .map((val, index) => {
-            return { value: val, col: res.columnHeaders[index] };
-          })
-          .flatten()
-          .value();
-      })
-      .value();
-        return res;
+            .map(row => _.chain(row)
+                .map((val, index) => ({
+                    value: val,
+                    col:   res.columnHeaders[index],
+                }))
+                .flatten()
+                .value()
+            )
+            .value()
+
+        return res
     }
 
     getAccountProfiles() {
@@ -88,20 +89,16 @@ class API {
 
         const transform = res => {
             return _.chain(res.items)
-                .map((item) => {
-          return {
-            name: item.name,
-            properties: _.chain(item.webProperties)
-              .map((webPro) => {
-                return { name: webPro.name, profiles: webPro.profiles };
-              })
-              .value()
-          };
-        })
-        .flatten()
-        .flatten()
-        .value();
-        };
+                .map(({ name, webProperties }) => {
+                    return {
+                        name,
+                        properties: _.chain(webProperties).map(({ name, profiles }) => ({ name, profiles })).value(),
+                    }
+                })
+                .flatten()
+                .flatten()
+                .value()
+        }
 
         // Retrieve summary info and pick the relevant info from it
         return this.request(analytics.management.accountSummaries.list, params, transform);
