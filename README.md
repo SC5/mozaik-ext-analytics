@@ -94,8 +94,8 @@ Follow the steps to install and configure widget into dashboard
 
 - Run command line app to retrieve ids (or see them from analytics - see references):
 
-  ```shell
-  node node_modules/mozaik-ext-analytics/cli.js
+  ``` sh
+  ./node_modules/mozaik-ext-analytics/bin/mozaik-analytics --keypath PATH_TO_JSON_KEY_FILE profiles
   ```
 
   **OR**
