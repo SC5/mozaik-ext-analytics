@@ -1,0 +1,107 @@
+#!/usr/bin/env node
+
+const _           = require('lodash')
+const yargs       = require('yargs')
+const dotenv      = require('dotenv')
+const prettyPrint = require('pretty-print')
+const columnify   = require('columnify')
+const API         = require('../src/api')
+const config      = require('../src/config')
+
+
+dotenv.load({ silent: true })
+
+const app = yargs
+
+const errorHandler = msg => err => {
+    console.log('')
+    console.log(msg)
+    console.log('')
+    console.error(err)
+    process.exit(1)
+}
+
+/**
+ * @param {string} _keypath
+ * @return {API}
+ */
+const getAPI = ({ keypath: _keypath }) => {
+    const keypath = _keypath || config.get('analytics.googleServiceKeypath')
+    if (!keypath) {
+        console.log([
+            '',
+            '"keypath" is required, it can be defined via the --keypath option',
+            'or by defining the GOOGLE_SERVICE_KEYPATH environment variable',
+            '',
+        ].join('\n'))
+        app.showHelp()
+        process.exit(1)
+    }
+
+    try {
+        return API.fromJSON(keypath)
+    } catch (err) {
+        errorHandler(`Unable to load account key from "${serviceKeyPath}"`)(err)
+    }
+}
+
+const argv = app
+    .option('keypath', {
+        describe: 'json account key file path',
+    })
+    .command({
+        command: 'profiles',
+        desc:    'List profile ids',
+        handler: argv => {
+            const api = getAPI(argv)
+            api.getAccountProfiles()
+                .then(profiles => {
+                    console.log('')
+                    console.log('Available profiles:')
+                    console.log('')
+                    profiles.forEach(({ name, properties }) => {
+                        console.log(`${name}:`)
+                        properties.forEach(prop => {
+                            console.log(`  ${prop.name}:`)
+                            prop.profiles.forEach(profile => {
+                                prettyPrint(profile, { leftPadding: 4 })
+                            })
+                        })
+                        console.log('')
+                    })
+                })
+                .catch(errorHandler('an error occurred while fetching profile ids'))
+        }
+    })
+    .command({
+        command: 'top-pages [id]',
+        desc:    'Display top pages for given profile id',
+        builder: yargs => yargs.demand(2),
+        handler: argv => {
+            const api = getAPI(argv)
+            api.getTopPages(argv.id)
+                .then(({ results }) => {
+                    console.log('')
+                    console.log(
+                        columnify(
+                            results.map(entry => _(entry)
+                                .keyBy(o => o.col.name.slice(3))
+                                .mapValues('value')
+                                .value()
+                            ), {
+                                columnSplitter: '  |  ',
+                            }
+                        )
+                    )
+                    console.log('')
+                })
+                .catch(errorHandler('an error occurred while fetching top pages'))
+        },
+    })
+    .demand(1)
+    .global(['keypath'])
+    .help()
+    .locale('pirate')
+    .argv
+
+

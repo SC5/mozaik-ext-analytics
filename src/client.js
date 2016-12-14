@@ -1,68 +1,53 @@
-import path from 'path';
-import fs from 'fs';
-import config from './config';
-import Analyzer from './analyzer';
-import Promise from 'bluebird';
-import request from 'superagent-bluebird-promise';
+const path   = require('path')
+const fs     = require('fs')
+const chalk  = require('chalk')
+const config = require('./config')
+const API    = require('./api')
+
 
 /**
  * @param {Mozaik} mozaik
  */
-const client = (mozaik) => {
-  mozaik.loadApiConfig(config);
+const client = mozaik => {
+    mozaik.loadApiConfig(config)
 
-  // Either key or keyPath is required
-  let key = config.get('analytics.googleServiceKey');
+    let api
 
-  if (!key) {
-    let keyPath = config.get('analytics.googleServiceKeypath');
+    // Either key or keyPath is required
+    let key = config.get('analytics.googleServiceKey')
+    if (!key) {
+        let keyPath = config.get('analytics.googleServiceKeypath')
 
-    if (!keyPath) {
-      mozaik.logger.error('No key or key path defined -- ignoring API');
-      return {};
+        if (!keyPath) {
+            mozaik.logger.error(chalk.red('No key or key path defined'))
+            process.exit(1)
+        }
+
+        try {
+            api = API.fromJSON(keyPath)
+        } catch (err) {
+            mozaik.logger.error(chalk.red('An error occurred while loading key file'))
+            process.exit(1)
+        }
+    } else {
+        api = new API(config.get('analytics.googleServiceEmail'), key)
     }
 
-    keyPath = path.normalize(keyPath);
-    // Seems absolute/relative?
-    if (!keyPath.match('^\/')) {
-      keyPath = path.join(process.cwd(), keyPath);
+    const operations = {
+        pageViews({ id, startDate, endDate }) {
+            mozaik.logger.info(chalk.yellow(`[g-analytics] calling page views (${id}, ${startDate}, ${endDate})`))
+
+            return api.getPageViews(id, { startDate, endDate })
+        },
+        topPages({ id, dimensions, startDate, endDate }) {
+            mozaik.logger.info(chalk.yellow(`[g-analytics] calling top pages (${id}, ${startDate}, ${endDate})`))
+
+            return api.getTopPages(id, { dimensions, startDate, endDate })
+        }
     }
 
-    if (!fs.existsSync(keyPath)) {
-      mozaik.logger.error('Failed to find analytics .PEM file: %s -- ignoring API', keyPath);
-      return {};
-    }
+    return operations
+}
 
-    key = fs.readFileSync(keyPath).toString();
-  }
 
-  const analyzer = new Analyzer({
-    serviceEmail: config.get('analytics.googleServiceEmail'),
-    serviceKey: key
-  });
-
-  const apiCalls = {
-    pageViews(params) {
-      console.log('Requesting analyzer statistics:', params);
-      return analyzer.getPageViews({
-        id: params.id,
-        startDate: params.startDate,
-        endDate: params.endDate
-      });
-    },
-
-    topPages(params) {
-      console.log('Requesting analyzer top pages:', params);
-      return analyzer.getTopPages({
-        id: params.id,
-        dimensions: params.dimensions,
-        startDate: params.startDate,
-        endDate: params.endDate
-      });
-    }
-  };
-
-  return apiCalls;
-};
-
-export default client;
+module.exports = client
