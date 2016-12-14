@@ -76,7 +76,7 @@ const argv = app
     .command({
         command: 'top-pages [id]',
         desc:    'Display top pages for given profile id',
-        builder: yargs => yargs.demand(2),
+        builder: yargs => yargs.demand(1),
         handler: argv => {
             const api = getAPI(argv)
             api.getTopPages(argv.id)
@@ -96,6 +96,37 @@ const argv = app
                     console.log('')
                 })
                 .catch(errorHandler('an error occurred while fetching top pages'))
+        },
+    })
+    .command({
+        command: 'page-views [id]',
+        desc:    'Display page views for given profile id',
+        builder: yargs => yargs.demand(1),
+        handler: argv => {
+            const api = getAPI(argv)
+            api.getPageViews(argv.id)
+                .then(({ results }) => {
+                    console.log('')
+                    console.log(
+                        columnify(
+                            results.map(entry => _(entry)
+                                .keyBy(o => o.col.name.slice(3))
+                                .mapValues((o, k) => {
+                                    const v = o.value
+
+                                    if (k !== 'date') return v
+
+                                    return `${v.slice(0, 4)}-${v.slice(4, 6)}-${v.slice(6, 8)}`
+                                })
+                                .value()
+                            ), {
+                                columnSplitter: '  |  ',
+                            }
+                        )
+                    )
+                    console.log('')
+                })
+                .catch(errorHandler('an error occurred while fetching page views'))
         },
     })
     .demand(1)
