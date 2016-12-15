@@ -43,6 +43,11 @@ const client = mozaik => {
             mozaik.logger.info(chalk.yellow(`[g-analytics] calling top pages (${id}, ${startDate}, ${endDate})`))
 
             return api.getTopPages(id, { dimensions, startDate, endDate })
+        },
+        browser({ id, startDate, endDate }) {
+            mozaik.logger.info(chalk.yellow(`[g-analytics] calling browser (${id}, ${startDate}, ${endDate})`))
+
+            return api.getBrowserInfo(id, { startDate, endDate })
         }
     }
 

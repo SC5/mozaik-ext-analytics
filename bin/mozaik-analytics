@@ -76,7 +76,14 @@ const argv = app
     .command({
         command: 'top-pages [id]',
         desc:    'Display top pages for given profile id',
-        builder: yargs => yargs.demand(1),
+        builder: yargs => {
+            return yargs
+                .demand(1)
+                .option('start', {
+                    describe: 'start date',
+                    default:  '7daysAgo',
+                })
+        },
         handler: argv => {
             const api = getAPI(argv)
             api.getTopPages(argv.id)
@@ -127,6 +134,25 @@ const argv = app
                     console.log('')
                 })
                 .catch(errorHandler('an error occurred while fetching page views'))
+        },
+    })
+    .command({
+        command: 'browser [id]',
+        desc:    'Display browser info for given profile id',
+        builder: yargs => yargs.demand(1),
+        handler: argv => {
+            const api = getAPI(argv)
+            api.getBrowserInfo(argv.id)
+                .then(({ results }) => {
+                    console.log('')
+                    console.log(
+                        columnify(results, {
+                            columnSplitter: '  |  ',
+                        })
+                    )
+                    console.log('')
+                })
+                .catch(errorHandler('an error occurred while fetching browser info'))
         },
     })
     .demand(1)

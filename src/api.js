@@ -106,13 +106,13 @@ class API {
 
     getTopPages(id, opts = {}) {
         const params = {
-            'dimensions':  'ga:pagePath',
             'ids':         this.prefixId(id),
             'start-date':  opts.startDate  || '30daysAgo',
             'end-date':    opts.endDate    || 'yesterday',
             'max-results': opts.maxResults || 10,
-            'sort':        '-ga:pageviews',
+            'dimensions':  'ga:pagePath',
             'metrics':     'ga:pageviews,ga:avgTimeOnPage',
+            'sort':        '-ga:pageviews',
         }
 
         return this.request(analytics.data.ga.get, params, this.mapRequestResponse);
@@ -123,11 +123,44 @@ class API {
             'ids':        this.prefixId(id),
             'start-date': opts.startDate || '7daysAgo',
             'end-date':   opts.endDate   || 'yesterday',
+            'dimensions': 'ga:date',
             'metrics':    'ga:pageviews,ga:sessions',
-            'dimensions': 'ga:date'
         }
 
         return this.request(analytics.data.ga.get, params, this.mapRequestResponse)
+    }
+
+    getBrowserInfo(id, opts = {}) {
+        const params = {
+            'ids':        this.prefixId(id),
+            'start-date': opts.startDate || '7daysAgo',
+            'end-date':   opts.endDate   || 'yesterday',
+            'dimensions': 'ga:browser,ga:browserVersion',
+            'metrics':    'ga:sessions',
+            'sort':       'ga:browser',
+        }
+
+        return this.request(analytics.data.ga.get, params, this.mapRequestResponse)
+            .then(data => {
+                return {
+                    query:        data.query,
+                    totalResults: data.totalResults,
+                    totals:       _.chain(data.totalsForAllResults)
+                        .mapKeys((v, k) => k.slice(3))
+                        .mapValues(Number)
+                        .value()
+                    ,
+                    results:      data.results.map(entry => _(entry)
+                        .keyBy(o => o.col.name.slice(3))
+                        .mapValues((o, k) => {
+                            const v = o.value
+                            if (k === 'sessions') return Number(v)
+                            return v
+                        })
+                        .value()
+                    ),
+                }
+            })
     }
 }
 
