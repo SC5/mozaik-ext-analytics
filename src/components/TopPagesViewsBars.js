@@ -9,7 +9,7 @@ import {
 } from 'nivo'
 
 
-const margin = { top: 30, right: 20, bottom: 20, left: 200 }
+const margin = { top: 10, right: 20, bottom: 36, left: 200 }
 
 
 class TopPagesViewsBars extends Component {
@@ -51,8 +51,15 @@ class TopPagesViewsBars extends Component {
                     <Scale id="page" dataKey="pagePath" type="band" padding={0.4} axis="y"/>
                     <Scale id="views" dataKey="pageviews" type="linear" axis="x"/>
                     <Grid xScale="views"/>
-                    <Axis axis="x" scaleId="views" position="top"/>
-                    <Axis axis="y" scaleId="page" position="left" tickSize={0} tickPadding={15}/>
+                    <Axis
+                        scaleId="views"
+                        position="bottom"
+                        tickSize={0}
+                        tickPadding={7}
+                        legend="page views"
+                        legendOffset={-10}
+                    />
+                    <Axis scaleId="page" position="left" tickSize={0} tickPadding={15}/>
                     <Bars xScale="views" yScale="page" x="pageviews" y="pagePath" color="#fff" />
                 </Chart>
             )
