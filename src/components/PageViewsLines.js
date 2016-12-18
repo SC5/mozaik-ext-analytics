@@ -7,6 +7,7 @@ import {
     Scale,
     Axis,
     Grid,
+    Line,
     Bars,
 } from 'nivo'
 
@@ -16,10 +17,10 @@ const aggregate  = d => Math.max(d.pageviews, d.sessions)
 const formatDate = d => moment(d).format('MM/DD')
 
 
-class PageViews extends Component {
+class PageViewsLines extends Component {
     static getApiRequest({
         id,
-        startDate = PageViews.defaultProps.startDate,
+        startDate = PageViewsLines.defaultProps.startDate,
         endDate
     }) {
         return {
@@ -51,19 +52,16 @@ class PageViews extends Component {
                         .value()
                 })
 
-            /*
-             enableLabels={false}
-             colors="set3"
-             */
+            //colors="set3"
             body = (
                 <Chart data={data} animate={true} margin={margin} theme={theme.charts}>
-                    <Scale id="agg" dataKey={aggregate} type="linear" axis="y"/>
-                    <Scale id="date" dataKey="date" type="band" axis="x" padding={0.2}/>
-                    <Grid yScale="agg" />
-                    <Axis axis="x" position="bottom" scaleId="date" format={formatDate}/>
+                    <Scale id="agg"  dataKey={aggregate} type="linear" axis="y"/>
+                    <Scale id="date" dataKey="date"      type="point"  axis="x"/>
+                    <Grid xScale="date" yScale="agg" />
+                    <Axis axis="x" position="bottom" scaleId="date" format={formatDate} />
                     <Axis axis="y" position="left"   scaleId="agg" />
-                    <Bars xScale="date" yScale="agg" x="date" y="pageviews" color="#00F"/>
-                    <Bars xScale="date" yScale="agg" x="date" y="sessions" color="#F00"/>
+                    <Line xScale="date" yScale="agg" x="date" y="pageviews" curve="monotoneX"/>
+                    <Line xScale="date" yScale="agg" x="date" y="sessions" curve="monotoneX"/>
                 </Chart>
             )
         }
@@ -82,7 +80,7 @@ class PageViews extends Component {
     }
 }
 
-PageViews.propTypes = {
+PageViewsLines.propTypes = {
     id:         PropTypes.number.isRequired,
     title:      PropTypes.string,
     dateFormat: PropTypes.string,
@@ -93,11 +91,11 @@ PageViews.propTypes = {
     tickCount:  PropTypes.number,
 };
 
-PageViews.defaultProps = {
+PageViewsLines.defaultProps = {
     title:      'sessions/page views',
     dateFormat: 'YYYY-MM-DD',
-    startDate:  '30daysAgo',
+    startDate:  '14daysAgo',
 }
 
 
-export default PageViews
+export default PageViewsLines

@@ -2,13 +2,6 @@
   "name": "mozaik-ext-analytics",
   "version": "0.3.2",
   "description": "Google Analytics widgets for Mozaïk dashboard",
-  "main": "./lib/components/index.js",
-  "scripts": {
-    "prepublish": "npm run build",
-    "test": "ava",
-    "build": "rm -rf lib/* && babel src --no-comments --out-dir lib",
-    "watch": "babel src --watch --out-dir lib"
-  },
   "author": {
     "name": "SC5",
     "url": "http://sc5.io/"
@@ -28,6 +21,12 @@
     "url": "https://github.com/SC5/mozaik-ext-analytics.git"
   },
   "license": "MIT",
+  "main": "./lib/components/index.js",
+  "engineStrict": true,
+  "engines": {
+    "node": ">=6.0.0",
+    "npm": ">=3.0.0"
+  },
   "dependencies": {
     "babel-cli": "^6.18.0",
     "babel-core": "^6.20.0",
@@ -62,6 +61,12 @@
     "mozaik": "^2.0.0-alpha.7",
     "nivo": "^1.0.0-alpha.7",
     "react": "^15.4.1"
+  },
+  "scripts": {
+    "prepublish": "npm run build",
+    "test": "ava",
+    "build": "rm -rf lib/* && babel src --no-comments --out-dir lib",
+    "watch": "babel src --watch --out-dir lib"
   },
   "browserify": {
     "transform": [

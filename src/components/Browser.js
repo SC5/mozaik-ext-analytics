@@ -8,17 +8,23 @@ import {
 } from 'mozaik/ui'
 
 
-export default class TopPages extends Component {
+export default class Browser extends Component {
     static propTypes = {
+        title:   PropTypes.string.isRequired,
         id:      PropTypes.number.isRequired,
         apiData: PropTypes.shape({
-            rows: PropTypes.array.isRequired,
+            totals:  PropTypes.object.isRequired,
+            results: PropTypes.array.isRequired,
         })
+    }
+
+    static defaultProps = {
+        title: 'Browser',
     }
 
     static getApiRequest({ id, dimensions, startDate, endDate }) {
         return {
-            id:     `analytics.topPages.${id}.${startDate || ''}.${endDate || ''}`,
+            id:     `analytics.browser.${id}.${startDate || ''}.${endDate || ''}`,
             params: { id, dimensions, startDate, endDate },
         }
     }
@@ -28,22 +34,22 @@ export default class TopPages extends Component {
 
         let items = null
         if (apiData) {
-            const { rows } = apiData
+            const { results } = apiData
             items = (
                 <Table>
                     <thead>
                         <tr>
-                            <HeadCell>page</HeadCell>
-                            <HeadCell>views</HeadCell>
-                            <HeadCell>avg. time</HeadCell>
+                            <HeadCell>browser</HeadCell>
+                            <HeadCell>version</HeadCell>
+                            <HeadCell>sessions</HeadCell>
                         </tr>
                     </thead>
                     <tbody>
-                        {rows.map(row => (
-                            <tr key={row[0]}>
-                                <Cell>{row[0]}</Cell>
-                                <Cell>{row[1]}</Cell>
-                                <Cell>{row[2]}</Cell>
+                        {results.map(row => (
+                            <tr key={`${row.browser}.${row.browserVersion}`}>
+                                <Cell>{row.browser}</Cell>
+                                <Cell>{row.browserVersion}</Cell>
+                                <Cell>{row.sessions}</Cell>
                             </tr>
                         ))}
                     </tbody>
@@ -54,8 +60,8 @@ export default class TopPages extends Component {
         return (
             <div>
                 <WidgetHeader
-                    title={title || 'Analytics'}
-                    count={apiData ? apiData.totalsForAllResults['ga:pageviews'] : null}
+                    title={title}
+                    count={apiData ? apiData.totals.sessions : null}
                     icon="line-chart"
                 />
                 <WidgetBody>
