@@ -10,13 +10,14 @@ Module provides some Google Analytics widgets for Mozaïk dashboard.
 - [Setup](#setup)
   - [Dependencies](#dependencies)
   - [Google Analytics](#google-analytics)
-  - [Widgets](#widgets)
-- [Widget: analytics.page_views](#widget-analyticspage_views)
-  - [parameters](#parameters)
-  - [usage](#usage)
-- [Widget: analytics.top_pages](#widget-analyticstop_pages)
-  - [parameters](#parameters-1)
-  - [usage](#usage-1)
+- [Widgets](#widgets)
+  - [`<Browser />`](#browser)
+  - [`<PageViews />`](#pageviews)
+  - [`<PageViewsLines />`](#pageviewslines)
+  - [`<TopPages />`](#toppages)
+  - [`<TopPagesAvgTimeBars />`](#toppagesavgtimebars)
+  - [`<TopPagesViewsBars />`](#toppagesviewsbars)
+  - [`<TopPagesViewsLines />`](#toppagesavgtimelines)
 - [License](#license)
 - [Credit](#credit)
 
@@ -51,8 +52,11 @@ Follow the steps to install and configure widget into dashboard
 
 - (Re)build the dashboard:
 
-  ```shell
-  npm run build-assets
+  ``` sh
+  # npm
+  npm run build
+  # yarn
+  yarn run build
   ```
 
 - Configure widgets (see Widgets -section)
@@ -145,6 +149,229 @@ Finally, start the dashboard with command:
 ```shell
 node app.js
 ```
+
+
+
+
+
+### Browser
+
+> Display browser stats (table).
+
+#### parameters
+
+key           | required | description
+--------------|----------|---------------
+`id`          | yes      | *Id of the analytics data to show. See setup steps or analytics view for more info. Example: `1231234321`*
+`startDate`   | no       | *Starting date info used in Analytics. Example/default: '30daysAgo'*
+`endDate`     | no       | *End date info used in Analytics. Example/default: 'yesterday'*
+`title`       | no       | *Textual title to show. Example: 'My website'.*
+
+#### usage
+
+``` yaml
+# config.yml
+dashboards:
+- # …
+  widgets:
+  - extension:    analytics
+    widget:       Browser
+    id:           xxxxxxxx
+    columns:      1
+    rows:         1
+    x:            0
+    y:            0
+```
+
+
+### PageViews
+
+> Display browser stats (table).
+
+#### parameters
+
+key           | required | description
+--------------|----------|---------------
+`id`          | yes      | *Id of the analytics data to show. See setup steps or analytics view for more info. Example: `1231234321`*
+`startDate`   | no       | *Starting date info used in Analytics. Example/default: '30daysAgo'*
+`endDate`     | no       | *End date info used in Analytics. Example/default: 'yesterday'*
+`title`       | no       | *Textual title to show. Example: 'My website'.*
+
+#### Usage
+
+``` yaml
+# config.yml
+dashboards:
+- # …
+  widgets:
+  - extension:    analytics
+    widget:       PageViews
+    id:           xxxxxxxx
+    columns:      1
+    rows:         1
+    x:            0
+    y:            0
+```
+
+
+### PageViewsLines
+
+> Display browser stats (table).
+
+#### parameters
+
+key           | required | description
+--------------|----------|---------------
+`id`          | yes      | *Id of the analytics data to show. See setup steps or analytics view for more info. Example: `1231234321`*
+`startDate`   | no       | *Starting date info used in Analytics. Example/default: '30daysAgo'*
+`endDate`     | no       | *End date info used in Analytics. Example/default: 'yesterday'*
+`title`       | no       | *Textual title to show. Example: 'My website'.*
+
+#### Usage
+
+``` yaml
+# config.yml
+dashboards:
+- # …
+  widgets:
+  - extension:    analytics
+    widget:       PageViewsLines
+    id:           xxxxxxxx
+    columns:      1
+    rows:         1
+    x:            0
+    y:            0
+```
+
+
+### TopPages
+
+> Display browser stats (table).
+
+#### parameters
+
+key           | required | description
+--------------|----------|---------------
+`id`          | yes      | *Id of the analytics data to show. See setup steps or analytics view for more info. Example: `1231234321`*
+`startDate`   | no       | *Starting date info used in Analytics. Example/default: '30daysAgo'*
+`endDate`     | no       | *End date info used in Analytics. Example/default: 'yesterday'*
+`title`       | no       | *Textual title to show. Example: 'My website'.*
+
+#### Usage
+
+``` yaml
+# config.yml
+dashboards:
+- # …
+  widgets:
+  - extension:    analytics
+    widget:       TopPages
+    id:           xxxxxxxx
+    columns:      1
+    rows:         1
+    x:            0
+    y:            0
+```
+
+
+### TopPagesAvgTimeBars
+
+> Display browser stats (table).
+
+#### parameters
+
+key           | required | description
+--------------|----------|---------------
+`id`          | yes      | *Id of the analytics data to show. See setup steps or analytics view for more info. Example: `1231234321`*
+`startDate`   | no       | *Starting date info used in Analytics. Example/default: '30daysAgo'*
+`endDate`     | no       | *End date info used in Analytics. Example/default: 'yesterday'*
+`title`       | no       | *Textual title to show. Example: 'My website'.*
+
+#### Usage
+
+``` yaml
+# config.yml
+dashboards:
+- # …
+  widgets:
+  - extension:    analytics
+    widget:       TopPagesAvgTimeBars
+    id:           xxxxxxxx
+    columns:      1
+    rows:         1
+    x:            0
+    y:            0
+```
+
+
+### TopPagesViewsBars
+
+> Display browser stats (table).
+
+#### parameters
+
+key           | required | description
+--------------|----------|---------------
+`id`          | yes      | *Id of the analytics data to show. See setup steps or analytics view for more info. Example: `1231234321`*
+`startDate`   | no       | *Starting date info used in Analytics. Example/default: '30daysAgo'*
+`endDate`     | no       | *End date info used in Analytics. Example/default: 'yesterday'*
+`title`       | no       | *Textual title to show. Example: 'My website'.*
+
+#### Usage
+
+``` yaml
+# config.yml
+dashboards:
+- # …
+  widgets:
+  - extension:    analytics
+    widget:       TopPagesViewsBars
+    id:           xxxxxxxx
+    columns:      1
+    rows:         1
+    x:            0
+    y:            0
+```
+
+
+### TopPagesViewsLines
+
+> Display browser stats (table).
+
+#### parameters
+
+key           | required | description
+--------------|----------|---------------
+`id`          | yes      | *Id of the analytics data to show. See setup steps or analytics view for more info. Example: `1231234321`*
+`startDate`   | no       | *Starting date info used in Analytics. Example/default: '30daysAgo'*
+`endDate`     | no       | *End date info used in Analytics. Example/default: 'yesterday'*
+`title`       | no       | *Textual title to show. Example: 'My website'.*
+
+#### Usage
+
+``` yaml
+# config.yml
+dashboards:
+- # …
+  widgets:
+  - extension:    analytics
+    widget:       TopPagesViewsLines
+    id:           xxxxxxxx
+    columns:      1
+    rows:         1
+    x:            0
+    y:            0
+```
+
+
+
+
+
+
+
+
+
+
 
 ## Widget: analytics.page_views
 
