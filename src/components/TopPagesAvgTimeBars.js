@@ -1,9 +1,26 @@
 import React, { Component, PropTypes } from 'react'
-import { WidgetHeader, WidgetBody }    from 'mozaik/ui'
 import { ResponsiveBar }               from 'nivo'
+import {
+    Widget,
+    WidgetHeader,
+    WidgetBody,
+    WidgetLoader,
+} from 'mozaik/ui'
 
 
-class TopPagesAvgTimeBars extends Component {
+export default class TopPagesAvgTimeBars extends Component {
+    static propTypes = {
+        title:   PropTypes.string.isRequired,
+        id:      PropTypes.number.isRequired,
+        apiData: PropTypes.shape({
+            rows: PropTypes.array.isRequired,
+        })
+    }
+
+    static defaultProps = {
+        title: 'Top pages avg. time',
+    }
+
     static getApiRequest({ id, dimensions, startDate, endDate }) {
         return {
             id:     `analytics.topPages.${id}.${startDate || ''}.${endDate || ''}`,
@@ -14,7 +31,7 @@ class TopPagesAvgTimeBars extends Component {
     render() {
         const { title, apiData } = this.props
 
-        let body = null
+        let body = <WidgetLoader />
         if (apiData) {
             const data = apiData.results
                 .map(entry => {
@@ -79,7 +96,7 @@ class TopPagesAvgTimeBars extends Component {
         }
 
         return (
-            <div>
+            <Widget>
                 <WidgetHeader
                     title={title}
                     count={apiData ? apiData.totalsForAllResults['ga:pageviews'] : null}
@@ -88,22 +105,7 @@ class TopPagesAvgTimeBars extends Component {
                 <WidgetBody style={{ overflowY: 'hidden' }}>
                     {body}
                 </WidgetBody>
-            </div>
+            </Widget>
         )
     }
 }
-
-TopPagesAvgTimeBars.propTypes = {
-    title:   PropTypes.string.isRequired,
-    id:      PropTypes.number.isRequired,
-    apiData: PropTypes.shape({
-        rows: PropTypes.array.isRequired,
-    })
-}
-
-TopPagesAvgTimeBars.defaultProps = {
-    title: 'Top pages avg. time',
-}
-
-
-export default TopPagesAvgTimeBars

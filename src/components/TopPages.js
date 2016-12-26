@@ -1,7 +1,9 @@
 import React, { Component, PropTypes } from 'react'
 import {
+    Widget,
     WidgetHeader,
     WidgetBody,
+    WidgetLoader,
     WidgetTable as Table,
     WidgetTableCell as Cell,
     WidgetTableHeadCell as HeadCell,
@@ -26,7 +28,7 @@ export default class TopPages extends Component {
     render() {
         const { title, apiData } = this.props
 
-        let items = null
+        let items = <WidgetLoader />
         if (apiData) {
             const { rows } = apiData
             items = (
@@ -52,7 +54,7 @@ export default class TopPages extends Component {
         }
 
         return (
-            <div>
+            <Widget>
                 <WidgetHeader
                     title={title || 'Analytics'}
                     count={apiData ? apiData.totalsForAllResults['ga:pageviews'] : null}
@@ -61,7 +63,7 @@ export default class TopPages extends Component {
                 <WidgetBody>
                     {items}
                 </WidgetBody>
-            </div>
+            </Widget>
         )
     }
 }

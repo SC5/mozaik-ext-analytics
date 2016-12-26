@@ -1,7 +1,9 @@
 import React, { Component, PropTypes } from 'react'
 import {
+    Widget,
     WidgetHeader,
     WidgetBody,
+    WidgetLoader,
     WidgetTable as Table,
     WidgetTableCell as Cell,
     WidgetTableHeadCell as HeadCell,
@@ -32,7 +34,7 @@ export default class Browser extends Component {
     render() {
         const { title, apiData } = this.props
 
-        let items = null
+        let items = <WidgetLoader />
         if (apiData) {
             const { results } = apiData
             items = (
@@ -58,7 +60,7 @@ export default class Browser extends Component {
         }
 
         return (
-            <div>
+            <Widget>
                 <WidgetHeader
                     title={title}
                     count={apiData ? apiData.totals.sessions : null}
@@ -67,7 +69,7 @@ export default class Browser extends Component {
                 <WidgetBody>
                     {items}
                 </WidgetBody>
-            </div>
+            </Widget>
         )
     }
 }

@@ -1,7 +1,12 @@
 import React, { Component, PropTypes } from 'react'
 import _                               from 'lodash'
 import moment                          from 'moment'
-import { WidgetHeader, WidgetBody }    from 'mozaik/ui'
+import {
+    Widget,
+    WidgetHeader,
+    WidgetBody,
+    WidgetLoader,
+} from 'mozaik/ui'
 import {
     ResponsiveChart as Chart,
     Scale,
@@ -17,7 +22,24 @@ const aggregate  = d => Math.max(d.pageviews, d.sessions)
 const formatDate = d => moment(d).format('MM/DD')
 
 
-class PageViewsLines extends Component {
+export default class PageViewsLines extends Component {
+    static propTypes = {
+        id:         PropTypes.number.isRequired,
+        title:      PropTypes.string,
+        dateFormat: PropTypes.string,
+        startDate:  PropTypes.string,
+        endDate:    PropTypes.string,
+        min:        PropTypes.number,
+        max:        PropTypes.number,
+        tickCount:  PropTypes.number,
+    };
+
+    static defaultProps = {
+        title:      'sessions/page views',
+        dateFormat: 'YYYY-MM-DD',
+        startDate:  '14daysAgo',
+    }
+
     static getApiRequest({
         id,
         startDate = PageViewsLines.defaultProps.startDate,
@@ -37,7 +59,7 @@ class PageViewsLines extends Component {
         const { title, apiData } = this.props
         const { theme }          = this.context
 
-        let body = null
+        let body = <WidgetLoader />
         if (apiData) {
             const data = apiData.results
                 .map(entry => {
@@ -67,7 +89,7 @@ class PageViewsLines extends Component {
         }
 
         return (
-            <div>
+            <Widget>
                 <WidgetHeader
                     title={title}
                     icon="line-chart"
@@ -75,27 +97,7 @@ class PageViewsLines extends Component {
                 <WidgetBody style={{ overflowY: 'hidden' }}>
                     {body}
                 </WidgetBody>
-            </div>
+            </Widget>
         )
     }
 }
-
-PageViewsLines.propTypes = {
-    id:         PropTypes.number.isRequired,
-    title:      PropTypes.string,
-    dateFormat: PropTypes.string,
-    startDate:  PropTypes.string,
-    endDate:    PropTypes.string,
-    min:        PropTypes.number,
-    max:        PropTypes.number,
-    tickCount:  PropTypes.number,
-};
-
-PageViewsLines.defaultProps = {
-    title:      'sessions/page views',
-    dateFormat: 'YYYY-MM-DD',
-    startDate:  '14daysAgo',
-}
-
-
-export default PageViewsLines

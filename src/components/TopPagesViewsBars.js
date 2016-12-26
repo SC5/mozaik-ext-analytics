@@ -1,5 +1,10 @@
 import React, { Component, PropTypes } from 'react'
-import { WidgetHeader, WidgetBody }    from 'mozaik/ui'
+import {
+    Widget,
+    WidgetHeader,
+    WidgetBody,
+    WidgetLoader,
+} from 'mozaik/ui'
 import {
     ResponsiveChart as Chart,
     Scale,
@@ -12,7 +17,19 @@ import {
 const margin = { top: 10, right: 20, bottom: 36, left: 200 }
 
 
-class TopPagesViewsBars extends Component {
+export default class TopPagesViewsBars extends Component {
+    static propTypes = {
+        title:   PropTypes.string.isRequired,
+        id:      PropTypes.number.isRequired,
+        apiData: PropTypes.shape({
+            rows: PropTypes.array.isRequired,
+        })
+    }
+
+    static defaultProps = {
+        title: 'Top pages views',
+    }
+
     static getApiRequest({ id, dimensions, startDate, endDate }) {
         return {
             id:     `analytics.topPages.${id}.${startDate || ''}.${endDate || ''}`,
@@ -28,7 +45,7 @@ class TopPagesViewsBars extends Component {
         const { title, apiData } = this.props
         const { theme }          = this.context
 
-        let body = null
+        let body = <WidgetLoader />
         if (apiData) {
             const data = apiData.results
                 .map(entry => {
@@ -66,7 +83,7 @@ class TopPagesViewsBars extends Component {
         }
 
         return (
-            <div>
+            <Widget>
                 <WidgetHeader
                     title={title}
                     count={apiData ? apiData.totalsForAllResults['ga:pageviews'] : null}
@@ -75,22 +92,7 @@ class TopPagesViewsBars extends Component {
                 <WidgetBody style={{ overflowY: 'hidden' }}>
                     {body}
                 </WidgetBody>
-            </div>
+            </Widget>
         )
     }
 }
-
-TopPagesViewsBars.propTypes = {
-    title:   PropTypes.string.isRequired,
-    id:      PropTypes.number.isRequired,
-    apiData: PropTypes.shape({
-        rows: PropTypes.array.isRequired,
-    })
-}
-
-TopPagesViewsBars.defaultProps = {
-    title: 'Top pages views',
-}
-
-
-export default TopPagesViewsBars

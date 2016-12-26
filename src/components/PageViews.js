@@ -1,7 +1,12 @@
 import React, { Component, PropTypes } from 'react'
 import _                               from 'lodash'
 import moment                          from 'moment'
-import { WidgetHeader, WidgetBody }    from 'mozaik/ui'
+import {
+    Widget,
+    WidgetHeader,
+    WidgetBody,
+    WidgetLoader,
+} from 'mozaik/ui'
 import {
     ResponsiveChart as Chart,
     Scale,
@@ -16,7 +21,24 @@ const aggregate  = d => Math.max(d.pageviews, d.sessions)
 const formatDate = d => moment(d).format('MM/DD')
 
 
-class PageViews extends Component {
+export default class PageViews extends Component {
+    static propTypes = {
+        id:         PropTypes.number.isRequired,
+        title:      PropTypes.string,
+        dateFormat: PropTypes.string,
+        startDate:  PropTypes.string,
+        endDate:    PropTypes.string,
+        min:        PropTypes.number,
+        max:        PropTypes.number,
+        tickCount:  PropTypes.number,
+    };
+
+    static defaultProps = {
+        title:      'sessions/page views',
+        dateFormat: 'YYYY-MM-DD',
+        startDate:  '30daysAgo',
+    }
+
     static getApiRequest({
         id,
         startDate = PageViews.defaultProps.startDate,
@@ -36,7 +58,7 @@ class PageViews extends Component {
         const { title, apiData } = this.props
         const { theme }          = this.context
 
-        let body = null
+        let body = <WidgetLoader />
         if (apiData) {
             const data = apiData.results
                 .map(entry => {
@@ -61,7 +83,7 @@ class PageViews extends Component {
                     <Scale id="date" dataKey="date" type="band" axis="x" padding={0.2}/>
                     <Grid yScale="agg" />
                     <Axis axis="x" position="bottom" scaleId="date" format={formatDate}/>
-                    <Axis axis="y" position="left"   scaleId="agg" />
+                    <Axis axis="y" position="left"   scaleId="agg" tickSize={0} tickPadding={7}/>
                     <Bars xScale="date" yScale="agg" x="date" y="pageviews" color="#00F"/>
                     <Bars xScale="date" yScale="agg" x="date" y="sessions" color="#F00"/>
                 </Chart>
@@ -69,7 +91,7 @@ class PageViews extends Component {
         }
 
         return (
-            <div>
+            <Widget>
                 <WidgetHeader
                     title={title}
                     icon="line-chart"
@@ -77,27 +99,7 @@ class PageViews extends Component {
                 <WidgetBody style={{ overflowY: 'hidden' }}>
                     {body}
                 </WidgetBody>
-            </div>
+            </Widget>
         )
     }
 }
-
-PageViews.propTypes = {
-    id:         PropTypes.number.isRequired,
-    title:      PropTypes.string,
-    dateFormat: PropTypes.string,
-    startDate:  PropTypes.string,
-    endDate:    PropTypes.string,
-    min:        PropTypes.number,
-    max:        PropTypes.number,
-    tickCount:  PropTypes.number,
-};
-
-PageViews.defaultProps = {
-    title:      'sessions/page views',
-    dateFormat: 'YYYY-MM-DD',
-    startDate:  '30daysAgo',
-}
-
-
-export default PageViews
