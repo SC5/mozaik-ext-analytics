@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import {
     Widget,
     WidgetHeader,
@@ -7,20 +8,20 @@ import {
     WidgetTable as Table,
     WidgetTableCell as Cell,
     WidgetTableHeadCell as HeadCell,
-} from 'mozaik/ui'
-
+} from '@mozaik/ui'
 
 export default class TopPages extends Component {
     static propTypes = {
-        id:      PropTypes.number.isRequired,
+        id: PropTypes.number.isRequired,
         apiData: PropTypes.shape({
             rows: PropTypes.array.isRequired,
-        })
+        }),
+        title: PropTypes.string,
     }
 
     static getApiRequest({ id, dimensions, startDate, endDate }) {
         return {
-            id:     `analytics.topPages.${id}.${startDate || ''}.${endDate || ''}`,
+            id: `analytics.topPages.${id}.${startDate || ''}.${endDate || ''}`,
             params: { id, dimensions, startDate, endDate },
         }
     }
@@ -41,13 +42,19 @@ export default class TopPages extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {rows.map(row => (
+                        {rows.map(row =>
                             <tr key={row[0]}>
-                                <Cell>{row[0]}</Cell>
-                                <Cell>{row[1]}</Cell>
-                                <Cell>{row[2]}</Cell>
+                                <Cell>
+                                    {row[0]}
+                                </Cell>
+                                <Cell>
+                                    {row[1]}
+                                </Cell>
+                                <Cell>
+                                    {Number(row[2]).toFixed(2)}
+                                </Cell>
                             </tr>
-                        ))}
+                        )}
                     </tbody>
                 </Table>
             )
@@ -56,7 +63,7 @@ export default class TopPages extends Component {
         return (
             <Widget>
                 <WidgetHeader
-                    title={title || 'Analytics'}
+                    title={title || 'Top pages views/avg. time'}
                     count={apiData ? apiData.totalsForAllResults['ga:pageviews'] : null}
                     icon="line-chart"
                 />

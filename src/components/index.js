@@ -1,17 +1,21 @@
-import PageViews           from './PageViews'
-import PageViewsLines      from './PageViewsLines'
-import TopPages            from './TopPages'
-import TopPagesViewsBars   from './TopPagesViewsBars'
-import TopPagesViewsLines  from './TopPagesViewsLines'
-import TopPagesAvgTimeBars from './TopPagesAvgTimeBars'
-import Browser             from './Browser'
+import Browser from './Browser'
+import PageViews from './PageViews'
+import PageViewsLine from './PageViewsLine'
+import TopPages from './TopPages'
+import TopPagesAvgTimeBar from './TopPagesAvgTimeBar'
+import TopPagesViewsBar from './TopPagesViewsBar'
+import TopPagesViewsBubble from './TopPagesViewsBubble'
+import TopPagesViewsLine from './TopPagesViewsLine'
+import TopPagesViewsTreeMap from './TopPagesViewsTreeMap'
 
 export default {
-    PageViews,
-    PageViewsLines,
-    TopPages,
-    TopPagesViewsBars,
-    TopPagesViewsLines,
-    TopPagesAvgTimeBars,
     Browser,
+    PageViews,
+    PageViewsLine,
+    TopPages,
+    TopPagesAvgTimeBar,
+    TopPagesViewsBar,
+    TopPagesViewsBubble,
+    TopPagesViewsLine,
+    TopPagesViewsTreeMap,
 }

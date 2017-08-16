@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import {
     Widget,
     WidgetHeader,
@@ -7,17 +8,16 @@ import {
     WidgetTable as Table,
     WidgetTableCell as Cell,
     WidgetTableHeadCell as HeadCell,
-} from 'mozaik/ui'
-
+} from '@mozaik/ui'
 
 export default class Browser extends Component {
     static propTypes = {
-        title:   PropTypes.string.isRequired,
-        id:      PropTypes.number.isRequired,
+        title: PropTypes.string.isRequired,
+        id: PropTypes.number.isRequired,
         apiData: PropTypes.shape({
-            totals:  PropTypes.object.isRequired,
+            totals: PropTypes.object.isRequired,
             results: PropTypes.array.isRequired,
-        })
+        }),
     }
 
     static defaultProps = {
@@ -26,7 +26,7 @@ export default class Browser extends Component {
 
     static getApiRequest({ id, dimensions, startDate, endDate }) {
         return {
-            id:     `analytics.browser.${id}.${startDate || ''}.${endDate || ''}`,
+            id: `analytics.browser.${id}.${startDate || ''}.${endDate || ''}`,
             params: { id, dimensions, startDate, endDate },
         }
     }
@@ -47,13 +47,19 @@ export default class Browser extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {results.map(row => (
+                        {results.map(row =>
                             <tr key={`${row.browser}.${row.browserVersion}`}>
-                                <Cell>{row.browser}</Cell>
-                                <Cell>{row.browserVersion}</Cell>
-                                <Cell>{row.sessions}</Cell>
+                                <Cell>
+                                    {row.browser}
+                                </Cell>
+                                <Cell>
+                                    {row.browserVersion}
+                                </Cell>
+                                <Cell>
+                                    {row.sessions}
+                                </Cell>
                             </tr>
-                        ))}
+                        )}
                     </tbody>
                 </Table>
             )

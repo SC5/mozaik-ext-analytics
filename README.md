@@ -1,23 +1,30 @@
 # mozaik-ext-analytics
 
-Module provides some Google Analytics widgets for Mozaïk dashboard.
+[![License][license-image]][license-url]
+[![NPM version][npm-image]][npm-url]
+![widget count][widget-count-image]
 
-![preview-page-views](https://raw.githubusercontent.com/SC5/mozaik-ext-analytics/master/previews/page_views.png)
+This module provides some Google Analytics widgets for [Mozaïk](http://mozaik.rocks) dashboards.
+
+![sample dashboard](preview/sample_dashboard.png)
 
 **Table of contents**
 <!-- MarkdownTOC depth=0 autolink=true bracket=round -->
 
 - [Setup](#setup)
-  - [Dependencies](#dependencies)
+  - [Install](#install)
   - [Google Analytics](#google-analytics)
 - [Widgets](#widgets)
   - [`<Browser />`](#browser)
   - [`<PageViews />`](#pageviews)
-  - [`<PageViewsLines />`](#pageviewslines)
+  - [`<PageViewsLine />`](#pageviewsline)
   - [`<TopPages />`](#toppages)
-  - [`<TopPagesAvgTimeBars />`](#toppagesavgtimebars)
-  - [`<TopPagesViewsBars />`](#toppagesviewsbars)
-  - [`<TopPagesViewsLines />`](#toppagesavgtimelines)
+  - [`<TopPagesAvgTimeBar />`](#toppagesavgtimebar)
+  - [`<TopPagesViewsBar />`](#toppagesviewsbar)
+  - [`<TopPagesViewsBubble />`](#toppagesviewsbubble)
+  - [`<TopPagesViewsLine />`](#toppagesviewsline)
+  - [`<TopPagesViewsTreeMap />`](#toppagesviewstreemap)
+- [Reusable config](#reusable-config)  
 - [License](#license)
 - [Credit](#credit)
 
@@ -26,41 +33,54 @@ Module provides some Google Analytics widgets for Mozaïk dashboard.
 
 ## Setup
 
-Follow the steps to install and configure widget into dashboard
+Follow these steps to install and configure extension's widgets into your dashboard.
 
-### Dependencies
+### Install
 
-- Install modules from npmjs:
+- Install extension:
 
-  ```shell
+  ```sh
   npm install -S mozaik-ext-analytics
   ```
-
-- Register client api by adding to dashboard `app.js`:
-
-  ```javascript
-  import analytics from 'mozaik-ext-analytics/client';
-  mozaik.bus.registerApi('analytics', analytics;
+  
+  or using yarn
+  
+  ```sh
+  yarn add mozaik-ext-analytics
   ```
 
-- Register widgets by adding to dashboard `src/App.jsx`:
+- Register client api by adding to dashboard `server.js`:
 
   ```javascript
-  import analytics from 'mozaik-ext-analytics';
-  mozaik.addBatch('analytics', analytics);
+  // …
+  Mozaik.registerApi('analytics', require('mozaik-ext-analytics/client'))
+  ```
+
+- Register widgets by adding to dashboard `src/index.js`:
+
+  ```javascript
+  import { Registry } from '@mozaik/ui'
+  import analytics from 'mozaik-ext-analytics'
+
+  Registry.addExtensions({
+      analytics,
+  })
   ```
 
 - (Re)build the dashboard:
 
   ``` sh
-  # npm
   npm run build
-  # yarn
+  ```
+  
+  or using yarn
+  
+  ```sh
   yarn run build
   ```
 
 - Configure widgets (see Widgets -section)
-- Start dashboard: `node app.js`
+- Start dashboard: `node server.js config.yml`
 
 ### Google Analytics
 
@@ -110,53 +130,40 @@ Follow the steps to install and configure widget into dashboard
 
 ### Widgets
 
-Set api and wiget configuration values in dashboard `config.js`.
-See followup section for details.
+Because all Mozaïk demos load config vars using `dotenv` module, you don't have to manually load them.
+You just have to add some widgets to configuration file (usually `config.yml`).
 
-```javascript
-module.exports = {
-  // Configure api
-  api: {
-    analytics: {
-      // NOTE: Either key or key path needs to be provided
-      googleServiceEmail: process.env.GOOGLE_SERVICE_EMAIL,
-      googleServiceKey: process.env.GOOGLE_SERVICE_KEY
-      googleServiceKeypath: process.env.GOOGLE_SERVICE_KEYPATH
-    },
-    // Other services ...
-  },
-
-  // Set widgets
-  dashboards: [
-    columns: 2,
-    rows: 2,
-    // See next sections for details
-    widgets: [
-      {
-        type: 'analytics.page_views',
-        id: '123123123',
-        startDate: '30daysAgo',
-        columns: 2, rows: 2,
-        x: 0, y: 0
-      }
-    ]
-  ]
-}
+```yaml
+# config.yml
+# …
+dashboards:
+- title:   Google Analytics Demo
+  columns: 3
+  rows:    3
+  widgets:
+  -
+    extension: analytics
+    widget:    Browser
+    id:        xxxxxxxx
+    startDate: 15daysAgo
+    columns:   1
+    rows:      1
+    x:         0
+    y:         0
+  # …
 ```
 
 Finally, start the dashboard with command:
 
-```shell
-node app.js
+```sh
+node server.js
 ```
-
-
-
-
 
 ### Browser
 
 > Display browser stats (table).
+
+![Browser widget](preview/browser.png)
 
 #### parameters
 
@@ -174,19 +181,21 @@ key           | required | description
 dashboards:
 - # …
   widgets:
-  - extension:    analytics
-    widget:       Browser
-    id:           xxxxxxxx
-    columns:      1
-    rows:         1
-    x:            0
-    y:            0
+  - extension: analytics
+    widget:    Browser
+    id:        xxxxxxxx
+    columns:   1
+    rows:      1
+    x:         0
+    y:         0
 ```
 
 
 ### PageViews
 
-> Display browser stats (table).
+> Bar chart showing page views & sessions for given period.
+
+![PageViews widget](preview/page_views.png)
 
 #### parameters
 
@@ -204,19 +213,21 @@ key           | required | description
 dashboards:
 - # …
   widgets:
-  - extension:    analytics
-    widget:       PageViews
-    id:           xxxxxxxx
-    columns:      1
-    rows:         1
-    x:            0
-    y:            0
+  - extension: analytics
+    widget:    PageViews
+    id:        xxxxxxxx
+    columns:   1
+    rows:      1
+    x:         0
+    y:         0
 ```
 
 
-### PageViewsLines
+### PageViewsLine
 
-> Display browser stats (table).
+> Line chart showing page views & sessions for given period.
+
+![PageViewsLine widget](preview/page_views_line.png)
 
 #### parameters
 
@@ -234,19 +245,21 @@ key           | required | description
 dashboards:
 - # …
   widgets:
-  - extension:    analytics
-    widget:       PageViewsLines
-    id:           xxxxxxxx
-    columns:      1
-    rows:         1
-    x:            0
-    y:            0
+  - extension analytics
+    widget:    PageViewsLine
+    id:        xxxxxxxx
+    columns:   1
+    rows:      1
+    x:         0
+    y:         0
 ```
 
 
 ### TopPages
 
-> Display browser stats (table).
+> Top pages stats (table).
+
+![TopPages widget](preview/top_pages.png)
 
 #### parameters
 
@@ -264,19 +277,21 @@ key           | required | description
 dashboards:
 - # …
   widgets:
-  - extension:    analytics
-    widget:       TopPages
-    id:           xxxxxxxx
-    columns:      1
-    rows:         1
-    x:            0
-    y:            0
+  - extension: analytics
+    widget:    TopPages
+    id:        xxxxxxxx
+    columns:   1
+    rows:      1
+    x:         0
+    y:         0
 ```
 
 
-### TopPagesAvgTimeBars
+### TopPagesAvgTimeBar
 
-> Display browser stats (table).
+> Bar chart showing top pages average time.
+
+![TopPagesAvgTimeBar widget](preview/top_pages_avg_time_bar.png)
 
 #### parameters
 
@@ -294,19 +309,21 @@ key           | required | description
 dashboards:
 - # …
   widgets:
-  - extension:    analytics
-    widget:       TopPagesAvgTimeBars
-    id:           xxxxxxxx
-    columns:      1
-    rows:         1
-    x:            0
-    y:            0
+  - extension: analytics
+    widget:    TopPagesAvgTimeBar
+    id:        xxxxxxxx
+    columns:   1
+    rows:      1
+    x:         0
+    y:         0
 ```
 
 
-### TopPagesViewsBars
+### TopPagesViewsBar
 
-> Display browser stats (table).
+> Bar chart showing top pages views.
+
+![TopPagesViewsBar widget](preview/top_pages_views_bar.png)
 
 #### parameters
 
@@ -324,19 +341,20 @@ key           | required | description
 dashboards:
 - # …
   widgets:
-  - extension:    analytics
-    widget:       TopPagesViewsBars
-    id:           xxxxxxxx
-    columns:      1
-    rows:         1
-    x:            0
-    y:            0
+  - extension: analytics
+    widget:    TopPagesViewsBar
+    id:        xxxxxxxx
+    columns:   1
+    rows:      1
+    x:         0
+    y:         0
 ```
 
+### TopPagesViewsBubble
 
-### TopPagesViewsLines
+> Bubble chart showing top pages views.
 
-> Display browser stats (table).
+![TopPagesViewsBubble widget](preview/top_pages_views_bubble.png)
 
 #### parameters
 
@@ -354,32 +372,22 @@ key           | required | description
 dashboards:
 - # …
   widgets:
-  - extension:    analytics
-    widget:       TopPagesViewsLines
-    id:           xxxxxxxx
-    columns:      1
-    rows:         1
-    x:            0
-    y:            0
+  - extension: analytics
+    widget:    TopPagesViewsBubble
+    id:        xxxxxxxx
+    columns:   1
+    rows:      1
+    x:         0
+    y:         0
 ```
 
+### TopPagesViewsLine
 
+> Line chart showing top pages views.
 
+![TopPagesViewsLine widget](preview/top_pages_views_line.png)
 
-
-
-
-
-
-
-
-## Widget: analytics.page_views
-
-Show the number of page views as a timeseries
-
-![preview-page-views](https://raw.githubusercontent.com/SC5/mozaik-ext-analytics/master/previews/page_views.png)
-
-### parameters
+#### parameters
 
 key           | required | description
 --------------|----------|---------------
@@ -388,49 +396,91 @@ key           | required | description
 `endDate`     | no       | *End date info used in Analytics. Example/default: 'yesterday'*
 `title`       | no       | *Textual title to show. Example: 'My website'.*
 
-
-### usage
-
-```javascript
-{
-  type: 'analytics.page_views',
-  id: '123123123',
-  startDate: '30daysAgo',
-  columns: 2, rows: 1,
-  x: 1, y: 0
-}
-```
-
-## Widget: analytics.top_pages
-
-Show list of pages, in order of most visits within given time range.
-
-![preview-top-pages](https://raw.githubusercontent.com/SC5/mozaik-ext-analytics/master/previews/top_pages.png)
-
-### parameters
-
-key           | required | description
---------------|----------|---------------
-`id`          | yes      | *Id of the analytics data to show. See setup steps or analytics view for more info. Example: `1231234321`*
-`dimensions`  | no       | *The dimensions and metrics explorer lists and describes all the dimensions and metrics available through the Core Reporting API. Use this reference [API](https://developers.google.com/analytics/devguides/reporting/core/dimsmets) : Example: `ga:pageTitle`*
-`startDate`   | no       | *Starting date info used in Analytics. Example/default: '30daysAgo'*
-`endDate`     | no       | *End date info used in Analytics. Example/default: 'yesterday'*
-`title`       | no       | *Textual title to show. Example: 'My website'.*
-
-### usage
+#### Usage
 
 ``` yaml
 # config.yml
 dashboards:
 - # …
   widgets:
-  - type:       analytics.top_pages
-    id:         123123123
-    startDate:  30daysAgo
-    columns:    2
-    rows:       1
-    x:          0
-    y:          0
+  - extension: analytics
+    widget:    TopPagesViewsLine
+    id:        xxxxxxxx
+    columns:   1
+    rows:      1
+    x:         0
+    y:         0
+```
+
+### TopPagesViewsTreeMap
+
+> Tree map chart showing top pages views.
+
+![TopPagesViewsTreeMap widget](preview/top_pages_views_tree_map.png)
+
+#### parameters
+
+key           | required | description
+--------------|----------|---------------
+`id`          | yes      | *Id of the analytics data to show. See setup steps or analytics view for more info. Example: `1231234321`*
+`startDate`   | no       | *Starting date info used in Analytics. Example/default: '30daysAgo'*
+`endDate`     | no       | *End date info used in Analytics. Example/default: 'yesterday'*
+`title`       | no       | *Textual title to show. Example: 'My website'.*
+
+#### Usage
+
+``` yaml
+# config.yml
+dashboards:
+- # …
+  widgets:
+  - extension: analytics
+    widget:    TopPagesViewsTreeMap
+    id:        xxxxxxxx
+    columns:   1
+    rows:      1
+    x:         0
+    y:         0
+```
+
+## Reusable config
+
+Sometimes you'll probably want to share some config across multiple components,
+because Mozaïk config is powered by yaml, it's quite easy to do so:
+
+```yaml
+# …
+extension: &extension analytics
+startDate: &startDate 15daysAgo
+endDate: &endDate 2daysAgo
+id: &id xxxxxxxx
+
+dashboards:
+- title:   Google Analytics Demo
+  columns: 3
+  rows:    3
+  widgets:
+  -
+    extension: *extension
+    widget:    Browser
+    id:        *id
+    startDate: *startDate
+    endDate:   *endDate
+    columns:   1
+    rows:      1
+    x:         0
+    y:         0
+  -
+    extension: *extension
+    widget:    PageViews
+    id:        *id
+    startDate: *startDate
+    endDate:   *endDate
+    columns:   1
+    rows:      1
+    x:         1
+    y:         0
+  # …
 ```
 
 ## License
@@ -440,3 +490,9 @@ Distributed under the MIT license
 ## Credit
 
 The module is backed by [SC5](http://sc5.io/)
+
+[license-image]: https://img.shields.io/github/license/SC5/mozaik-ext-analytics.svg?style=flat-square
+[license-url]: https://github.com/SC5/mozaik-ext-analytics/blob/master/LICENSE
+[npm-image]: https://img.shields.io/npm/v/mozaik-ext-analytics.svg?style=flat-square
+[npm-url]: https://www.npmjs.com/package/mozaik-ext-analytics
+[widget-count-image]: https://img.shields.io/badge/widgets-x9-green.svg?style=flat-square

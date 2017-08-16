@@ -1,0 +1,34 @@
+# Doc
+/preview
+
+# config
+.babelrc
+.eslintrc.yml
+.gitignore
+.npmignore
+.travis.yml
+
+# Logs
+*.log*
+
+# Non transpiled source code
+/src
+
+# Tests
+/test
+/.nyc_output
+/coverage
+
+# GitHub
+/.github
+
+# OSX
+.DS_Store
+
+# IDE
+.idea
+
+# Misc
+.env
+*.p12
+*.pem

@@ -1,9 +1,6 @@
-const path   = require('path')
-const fs     = require('fs')
-const chalk  = require('chalk')
+const chalk = require('chalk')
 const config = require('./config')
-const API    = require('./api')
-
+const API = require('./api')
 
 /**
  * @param {Mozaik} mozaik
@@ -35,24 +32,29 @@ const client = mozaik => {
 
     const operations = {
         pageViews({ id, startDate, endDate }) {
-            mozaik.logger.info(chalk.yellow(`[g-analytics] calling page views (${id}, ${startDate}, ${endDate})`))
+            mozaik.logger.info(
+                chalk.yellow(`[g-analytics] calling page views (${id}, ${startDate}, ${endDate})`)
+            )
 
             return api.getPageViews(id, { startDate, endDate })
         },
         topPages({ id, dimensions, startDate, endDate }) {
-            mozaik.logger.info(chalk.yellow(`[g-analytics] calling top pages (${id}, ${startDate}, ${endDate})`))
+            mozaik.logger.info(
+                chalk.yellow(`[g-analytics] calling top pages (${id}, ${startDate}, ${endDate})`)
+            )
 
             return api.getTopPages(id, { dimensions, startDate, endDate })
         },
         browser({ id, startDate, endDate }) {
-            mozaik.logger.info(chalk.yellow(`[g-analytics] calling browser (${id}, ${startDate}, ${endDate})`))
+            mozaik.logger.info(
+                chalk.yellow(`[g-analytics] calling browser (${id}, ${startDate}, ${endDate})`)
+            )
 
             return api.getBrowserInfo(id, { startDate, endDate })
-        }
+        },
     }
 
     return operations
 }
-
 
 module.exports = client

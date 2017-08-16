@@ -1,5 +1,11 @@
 .env
+.DS_Store
+.idea
+*.log*
+/.nyc_output
+/coverage
+/lib
+/es
+/node_modules
 *.p12
 *.pem
-node_modules
-/lib

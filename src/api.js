@@ -1,8 +1,7 @@
-const path       = require('path')
+const path = require('path')
 const googleapis = require('googleapis')
-const _          = require('lodash')
-const analytics  = googleapis.analytics('v3')
-
+const _ = require('lodash')
+const analytics = googleapis.analytics('v3')
 
 /**
  * API class for communicating with Analytics via googleapis.
@@ -14,26 +13,21 @@ class API {
      * @param {string} privateKey
      */
     constructor(email, privateKey) {
-        this.jwtClient = new googleapis.auth.JWT(
-            email,
-            null,
-            privateKey,
-            API.scopes
-        )
+        this.jwtClient = new googleapis.auth.JWT(email, null, privateKey, API.scopes)
     }
 
     authorize() {
         return new Promise((resolve, reject) => {
             this.jwtClient.authorize((err, tokens) => {
                 if (err) {
-                    console.error(err)
+                    console.error(err) // eslint-disable-line no-console
 
                     return reject(err)
                 }
 
                 resolve({ client: this.jwtClient, tokens })
-            });
-        });
+            })
+        })
     }
 
     /**
@@ -49,7 +43,7 @@ class API {
             return new Promise((resolve, reject) => {
                 method(Object.assign({}, params, { auth: auth.client }), (err, body) => {
                     if (err) {
-                        console.error(err)
+                        console.error(err) // eslint-disable-line no-console
 
                         return reject(err)
                     }
@@ -64,18 +58,19 @@ class API {
 
     // Ensure the given id is prefixed with ga:
     prefixId(id) {
-        return (id || '').toString().match(/^ga:/) ? id : `ga:${id}`;
+        return (id || '').toString().match(/^ga:/) ? id : `ga:${id}`
     }
 
     mapRequestResponse(res) {
         res.results = _.chain(res.rows)
-            .map(row => _.chain(row)
-                .map((val, index) => ({
-                    value: val,
-                    col:   res.columnHeaders[index],
-                }))
-                .flatten()
-                .value()
+            .map(row =>
+                _.chain(row)
+                    .map((val, index) => ({
+                        value: val,
+                        col: res.columnHeaders[index],
+                    }))
+                    .flatten()
+                    .value()
             )
             .value()
 
@@ -84,7 +79,7 @@ class API {
 
     getAccountProfiles() {
         const params = {
-            fields: 'items(name,webProperties(name,profiles(id,name)))'
+            fields: 'items(name,webProperties(name,profiles(id,name)))',
         }
 
         const transform = res => {
@@ -92,7 +87,9 @@ class API {
                 .map(({ name, webProperties }) => {
                     return {
                         name,
-                        properties: _.chain(webProperties).map(({ name, profiles }) => ({ name, profiles })).value(),
+                        properties: _.chain(webProperties)
+                            .map(({ name, profiles }) => ({ name, profiles }))
+                            .value(),
                     }
                 })
                 .flatten()
@@ -101,30 +98,30 @@ class API {
         }
 
         // Retrieve summary info and pick the relevant info from it
-        return this.request(analytics.management.accountSummaries.list, params, transform);
+        return this.request(analytics.management.accountSummaries.list, params, transform)
     }
 
     getTopPages(id, opts = {}) {
         const params = {
-            'ids':         this.prefixId(id),
-            'start-date':  opts.startDate  || '30daysAgo',
-            'end-date':    opts.endDate    || 'yesterday',
+            ids: this.prefixId(id),
+            'start-date': opts.startDate || '30daysAgo',
+            'end-date': opts.endDate || 'yesterday',
             'max-results': opts.maxResults || 10,
-            'dimensions':  'ga:pagePath',
-            'metrics':     'ga:pageviews,ga:avgTimeOnPage',
-            'sort':        '-ga:pageviews',
+            dimensions: 'ga:pagePath',
+            metrics: 'ga:pageviews,ga:avgTimeOnPage',
+            sort: '-ga:pageviews',
         }
 
-        return this.request(analytics.data.ga.get, params, this.mapRequestResponse);
+        return this.request(analytics.data.ga.get, params, this.mapRequestResponse)
     }
 
     getPageViews(id, opts = {}) {
         const params = {
-            'ids':        this.prefixId(id),
+            ids: this.prefixId(id),
             'start-date': opts.startDate || '7daysAgo',
-            'end-date':   opts.endDate   || 'yesterday',
-            'dimensions': 'ga:date',
-            'metrics':    'ga:pageviews,ga:sessions',
+            'end-date': opts.endDate || 'yesterday',
+            dimensions: 'ga:date',
+            metrics: 'ga:pageviews,ga:sessions',
         }
 
         return this.request(analytics.data.ga.get, params, this.mapRequestResponse)
@@ -132,25 +129,24 @@ class API {
 
     getBrowserInfo(id, opts = {}) {
         const params = {
-            'ids':        this.prefixId(id),
+            ids: this.prefixId(id),
             'start-date': opts.startDate || '7daysAgo',
-            'end-date':   opts.endDate   || 'yesterday',
-            'dimensions': 'ga:browser,ga:browserVersion',
-            'metrics':    'ga:sessions',
-            'sort':       'ga:browser',
+            'end-date': opts.endDate || 'yesterday',
+            dimensions: 'ga:browser,ga:browserVersion',
+            metrics: 'ga:sessions',
+            sort: 'ga:browser',
         }
 
-        return this.request(analytics.data.ga.get, params, this.mapRequestResponse)
-            .then(data => {
-                return {
-                    query:        data.query,
-                    totalResults: data.totalResults,
-                    totals:       _.chain(data.totalsForAllResults)
-                        .mapKeys((v, k) => k.slice(3))
-                        .mapValues(Number)
-                        .value()
-                    ,
-                    results:      data.results.map(entry => _(entry)
+        return this.request(analytics.data.ga.get, params, this.mapRequestResponse).then(data => {
+            return {
+                query: data.query,
+                totalResults: data.totalResults,
+                totals: _.chain(data.totalsForAllResults)
+                    .mapKeys((v, k) => k.slice(3))
+                    .mapValues(Number)
+                    .value(),
+                results: data.results.map(entry =>
+                    _(entry)
                         .keyBy(o => o.col.name.slice(3))
                         .mapValues((o, k) => {
                             const v = o.value
@@ -158,9 +154,9 @@ class API {
                             return v
                         })
                         .value()
-                    ),
-                }
-            })
+                ),
+            }
+        })
     }
 }
 
@@ -182,10 +178,9 @@ API.scopes = [
  */
 API.fromJSON = _jsonPath => {
     const jsonPath = path.isAbsolute(_jsonPath) ? _jsonPath : path.join(process.cwd(), _jsonPath)
-    const key      = require(jsonPath)
+    const key = require(jsonPath)
 
     return new API(key.client_email, key.private_key)
 }
-
 
 module.exports = API

@@ -1,18 +1,12 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import _ from 'lodash'
 import moment from 'moment'
 import { Widget, WidgetHeader, WidgetBody, WidgetLoader } from '@mozaik/ui'
-import { ResponsiveBar } from 'nivo'
-import { mapResults } from '../lib/dto'
+import { ResponsiveLine } from 'nivo'
 
-const mapper = mapResults({
-    'ga:date': 'date',
-    'ga:pageviews': 'views',
-    'ga:sessions': 'sessions',
-})
-
-const margin = { top: 20, right: 30, bottom: 40, left: 60 }
-const format = d => moment.unix(d).format('MM/DD')
+const margin = { top: 20, right: 20, bottom: 40, left: 60 }
+const format = d => moment(d).format('MM/DD')
 const axisLeft = {
     legend: 'sessions/views',
     legendPosition: 'center',
@@ -22,7 +16,7 @@ const axisBottom = {
     format,
 }
 
-export default class PageViews extends Component {
+export default class PageViewsLine extends Component {
     static propTypes = {
         id: PropTypes.number.isRequired,
         title: PropTypes.string,
@@ -41,10 +35,10 @@ export default class PageViews extends Component {
     static defaultProps = {
         title: 'sessions/page views',
         dateFormat: 'YYYY-MM-DD',
-        startDate: '30daysAgo',
+        startDate: '14daysAgo',
     }
 
-    static getApiRequest({ id, startDate = PageViews.defaultProps.startDate, endDate }) {
+    static getApiRequest({ id, startDate = PageViewsLine.defaultProps.startDate, endDate }) {
         return {
             id: `analytics.pageViews.${id}.${startDate || ''}.${endDate || ''}`,
             params: { id, startDate, endDate },
@@ -56,43 +50,51 @@ export default class PageViews extends Component {
 
         let body = <WidgetLoader />
         if (apiData) {
-            const data = mapper(apiData.results).reduce(
+            const data = apiData.results.reduce(
                 (acc, entry) => {
-                    acc[0].data.push({
-                        x: entry.date,
-                        y: Number(entry.sessions),
-                    })
-                    acc[1].data.push({
-                        x: entry.date,
-                        y: Number(entry.views),
-                    })
+                    const date = _.find(entry, d => d.col.name === 'ga:date')
+                    const views = _.find(entry, d => d.col.name === 'ga:pageviews')
+                    const sessions = _.find(entry, d => d.col.name === 'ga:sessions')
+
+                    if (date && views && sessions) {
+                        const dateString = `${date.value.slice(0, 4)}-${date.value.slice(
+                            4,
+                            6
+                        )}-${date.value.slice(6, 8)}`
+
+                        acc[0].data.push({
+                            x: dateString,
+                            y: Number(views.value),
+                        })
+                        acc[1].data.push({
+                            x: dateString,
+                            y: Number(sessions.value),
+                        })
+                    }
 
                     return acc
                 },
                 [
                     {
-                        id: 'sessions',
+                        id: 'views',
                         data: [],
                     },
                     {
-                        id: 'views',
+                        id: 'sessions',
                         data: [],
                     },
                 ]
             )
 
             body = (
-                <ResponsiveBar
+                <ResponsiveLine
                     data={data}
                     margin={margin}
-                    groupMode="grouped"
-                    xPadding={0.3}
                     theme={theme.charts}
                     colors={theme.charts.colors}
-                    enableLabels={false}
+                    animate={false}
                     axisLeft={axisLeft}
                     axisBottom={axisBottom}
-                    animate={false}
                 />
             )
         }
