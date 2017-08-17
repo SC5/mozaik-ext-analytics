@@ -3363,9 +3363,9 @@ natural-compare@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
 
-nivo@^0.14.0:
-  version "0.14.0"
-  resolved "https://registry.yarnpkg.com/nivo/-/nivo-0.14.0.tgz#96b21d95c49b2838ad5109cdc972e181dcb28661"
+nivo@^0.15.0:
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/nivo/-/nivo-0.15.0.tgz#57c7ddbbb3cfcebea085bb00c2045a973eddb674"
   dependencies:
     d3-chord "^1.0.4"
     d3-color "^1.0.3"
