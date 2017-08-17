@@ -1,18 +1,25 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import _ from 'lodash'
 import moment from 'moment'
 import { Widget, WidgetHeader, WidgetBody, WidgetLoader } from '@mozaik/ui'
 import { ResponsiveLine } from 'nivo'
+import { resultsMapper } from '../lib/dto'
 
-const margin = { top: 20, right: 20, bottom: 40, left: 60 }
-const format = d => moment(d).format('MM/DD')
+const mapResults = resultsMapper({
+    'ga:date': ['date'],
+    'ga:pageviews': ['views', v => Number(v)],
+    'ga:sessions': ['sessions', v => Number(v)],
+})
+
+const margin = { top: 20, right: 20, bottom: 54, left: 60 }
+const format = d => moment(d, 'YYYYMMDD').format('MM/DD')
 const axisLeft = {
     legend: 'sessions/views',
     legendPosition: 'center',
     legendOffset: -40,
 }
 const axisBottom = {
+    tickRotation: -60,
     format,
 }
 
@@ -50,27 +57,16 @@ export default class PageViewsLine extends Component {
 
         let body = <WidgetLoader />
         if (apiData) {
-            const data = apiData.results.reduce(
-                (acc, entry) => {
-                    const date = _.find(entry, d => d.col.name === 'ga:date')
-                    const views = _.find(entry, d => d.col.name === 'ga:pageviews')
-                    const sessions = _.find(entry, d => d.col.name === 'ga:sessions')
-
-                    if (date && views && sessions) {
-                        const dateString = `${date.value.slice(0, 4)}-${date.value.slice(
-                            4,
-                            6
-                        )}-${date.value.slice(6, 8)}`
-
-                        acc[0].data.push({
-                            x: dateString,
-                            y: Number(views.value),
-                        })
-                        acc[1].data.push({
-                            x: dateString,
-                            y: Number(sessions.value),
-                        })
-                    }
+            const data = mapResults(apiData.results).reduce(
+                (acc, { date, views, sessions }) => {
+                    acc[0].data.push({
+                        x: date,
+                        y: views,
+                    })
+                    acc[1].data.push({
+                        x: date,
+                        y: sessions,
+                    })
 
                     return acc
                 },

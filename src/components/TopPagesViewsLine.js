@@ -2,11 +2,11 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Widget, WidgetHeader, WidgetBody, WidgetLoader } from '@mozaik/ui'
 import { ResponsiveLine } from 'nivo'
-import { mapResults } from '../lib/dto'
+import { resultsMapper } from '../lib/dto'
 
-const mapper = mapResults({
-    'ga:pagePath': 'page',
-    'ga:pageviews': 'views',
+const mapResults = resultsMapper({
+    'ga:pagePath': ['x'],
+    'ga:pageviews': ['y', v => Number(v)],
 })
 
 const margin = { top: 20, right: 20, bottom: 40, left: 60 }
@@ -31,10 +31,10 @@ export default class TopPagesViewsLine extends Component {
         title: 'Top pages views',
     }
 
-    static getApiRequest({ id, dimensions, startDate, endDate }) {
+    static getApiRequest({ id, startDate, endDate }) {
         return {
             id: `analytics.topPages.${id}.${startDate || ''}.${endDate || ''}`,
-            params: { id, dimensions, startDate, endDate },
+            params: { id, startDate, endDate },
         }
     }
 
@@ -46,10 +46,7 @@ export default class TopPagesViewsLine extends Component {
             const data = [
                 {
                     id: 'views',
-                    data: mapper(apiData.results).map(({ page, views }) => ({
-                        x: page,
-                        y: Number(views),
-                    })),
+                    data: mapResults(apiData.results),
                 },
             ]
 

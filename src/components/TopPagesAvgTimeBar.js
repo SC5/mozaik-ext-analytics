@@ -2,20 +2,25 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { ResponsiveBar } from 'nivo'
 import { Widget, WidgetHeader, WidgetBody, WidgetLoader } from '@mozaik/ui'
-import { mapResults } from '../lib/dto'
+import { resultsMapper } from '../lib/dto'
 
-const mapper = mapResults({
-    'ga:pagePath': 'page',
-    'ga:avgTimeOnPage': 'avgTime',
+const mapResults = resultsMapper({
+    'ga:pagePath': ['page'],
+    'ga:avgTimeOnPage': ['avg. time', v => Number(Number(v).toFixed(2))],
 })
 
-const margin = { top: 20, right: 20, bottom: 40, left: 60 }
+const margin = { top: 10, right: 20, bottom: 54, left: 140 }
 const axisLeft = {
+    format: v => {
+        if (v.length <= 14) return v
+        return `${v.slice(0, 14)}…`
+    },
+}
+const axisBottom = {
     legend: 'avg. time',
     legendPosition: 'center',
-    legendOffset: -40,
+    legendOffset: 36,
 }
-const axisBottom = {}
 
 export default class TopPagesAvgTimeBar extends Component {
     static propTypes = {
@@ -31,10 +36,10 @@ export default class TopPagesAvgTimeBar extends Component {
         title: 'Top pages avg. time',
     }
 
-    static getApiRequest({ id, dimensions, startDate, endDate }) {
+    static getApiRequest({ id, startDate, endDate }) {
         return {
             id: `analytics.topPages.${id}.${startDate || ''}.${endDate || ''}`,
-            params: { id, dimensions, startDate, endDate },
+            params: { id, startDate, endDate },
         }
     }
 
@@ -43,23 +48,19 @@ export default class TopPagesAvgTimeBar extends Component {
 
         let body = <WidgetLoader />
         if (apiData) {
-            const data = [
-                {
-                    id: 'avg. time',
-                    data: mapper(apiData.results).map(({ page, avgTime }) => ({
-                        x: page,
-                        y: Number(avgTime).toFixed(2),
-                    })),
-                },
-            ]
-
             body = (
                 <ResponsiveBar
-                    data={data}
+                    data={mapResults(apiData.results).reverse()}
+                    indexBy="page"
+                    keys={['avg. time']}
+                    groupMode="grouped"
+                    layout="horizontal"
                     margin={margin}
                     theme={theme.charts}
                     colors={theme.charts.colors}
                     enableLabels={false}
+                    enableGridX={true}
+                    enableGridY={false}
                     animate={false}
                     xPadding={0.3}
                     axisLeft={axisLeft}

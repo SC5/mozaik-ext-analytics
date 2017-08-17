@@ -24,10 +24,10 @@ export default class Browser extends Component {
         title: 'Browser',
     }
 
-    static getApiRequest({ id, dimensions, startDate, endDate }) {
+    static getApiRequest({ id, startDate, endDate }) {
         return {
             id: `analytics.browser.${id}.${startDate || ''}.${endDate || ''}`,
-            params: { id, dimensions, startDate, endDate },
+            params: { id, startDate, endDate },
         }
     }
 

@@ -1,16 +1,26 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import _ from 'lodash'
 import { Widget, WidgetHeader, WidgetBody, WidgetLoader } from '@mozaik/ui'
 import { ResponsiveBar } from 'nivo'
+import { resultsMapper } from '../lib/dto'
 
-const margin = { top: 20, right: 20, bottom: 40, left: 60 }
+const mapResults = resultsMapper({
+    'ga:pagePath': ['page'],
+    'ga:pageviews': ['views', v => Number(v)],
+})
+
+const margin = { top: 10, right: 20, bottom: 54, left: 140 }
 const axisLeft = {
-    legend: 'views',
-    legendPosition: 'center',
-    legendOffset: -40,
+    format: v => {
+        if (v.length <= 14) return v
+        return `${v.slice(0, 14)}…`
+    },
 }
-const axisBottom = {}
+const axisBottom = {
+    legend: 'avg. time',
+    legendPosition: 'center',
+    legendOffset: 36,
+}
 
 export default class TopPagesViewsBar extends Component {
     static propTypes = {
@@ -26,10 +36,10 @@ export default class TopPagesViewsBar extends Component {
         title: 'Top pages views',
     }
 
-    static getApiRequest({ id, dimensions, startDate, endDate }) {
+    static getApiRequest({ id, startDate, endDate }) {
         return {
             id: `analytics.topPages.${id}.${startDate || ''}.${endDate || ''}`,
-            params: { id, dimensions, startDate, endDate },
+            params: { id, startDate, endDate },
         }
     }
 
@@ -38,31 +48,13 @@ export default class TopPagesViewsBar extends Component {
 
         let body = <WidgetLoader />
         if (apiData) {
-            const data = [
-                {
-                    id: 'views',
-                    data: apiData.results.reduce((acc, entry) => {
-                        const page = _.find(entry, d => d.col.name === 'ga:pagePath')
-                        const pageViews = _.find(entry, d => d.col.name === 'ga:pageviews')
-
-                        if (page && pageViews) {
-                            return [
-                                ...acc,
-                                {
-                                    x: page.value,
-                                    y: Number(pageViews.value),
-                                },
-                            ]
-                        }
-
-                        return acc
-                    }, []),
-                },
-            ]
-
             body = (
                 <ResponsiveBar
-                    data={data}
+                    data={mapResults(apiData.results).reverse()}
+                    indexBy="page"
+                    keys={['views']}
+                    groupMode="grouped"
+                    layout="horizontal"
                     margin={margin}
                     theme={theme.charts}
                     colors={theme.charts.colors}

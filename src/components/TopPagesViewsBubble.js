@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Widget, WidgetHeader, WidgetBody, WidgetLoader } from '@mozaik/ui'
 import { ResponsiveBubble } from 'nivo'
-import { mapResults } from '../lib/dto'
+import { resultsMapper } from '../lib/dto'
 
 const margin = {
     top: 10,
@@ -11,10 +11,10 @@ const margin = {
     left: 10,
 }
 
-const mapper = mapResults({
-    'ga:pagePath': 'page',
-    'ga:pageviews': 'views',
-    'ga:avgTimeOnPage': 'avgTime',
+const mapResults = resultsMapper({
+    'ga:pagePath': ['page'],
+    'ga:pageviews': ['views', v => Number(v)],
+    'ga:avgTimeOnPage': ['avgTime', v => Number(Number(v).toFixed(2))],
 })
 
 export default class TopPagesViewsBubble extends Component {
@@ -31,10 +31,10 @@ export default class TopPagesViewsBubble extends Component {
         title: 'Top pages views',
     }
 
-    static getApiRequest({ id, dimensions, startDate, endDate }) {
+    static getApiRequest({ id, startDate, endDate }) {
         return {
             id: `analytics.topPages.${id}.${startDate || ''}.${endDate || ''}`,
-            params: { id, dimensions, startDate, endDate },
+            params: { id, startDate, endDate },
         }
     }
 
@@ -45,7 +45,7 @@ export default class TopPagesViewsBubble extends Component {
         if (apiData) {
             const data = {
                 id: 'views',
-                children: mapper(apiData.results),
+                children: mapResults(apiData.results),
             }
 
             body = (
